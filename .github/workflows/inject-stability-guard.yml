@@ -1,0 +1,56 @@
+name: Inject stability guard
+
+on:
+  push:
+    branches: [test]
+    paths:
+      - '.github/workflows/inject-stability-guard.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: test
+          fetch-depth: 1
+
+      - name: Inject guard before Next scripts
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          tag = '<script src="/next-stability-guard.js"></script>'
+          changed = 0
+          for f in Path('.').rglob('*.html'):
+              if '.git' in f.parts:
+                  continue
+              text = f.read_text(encoding='utf-8', errors='ignore')
+              if '/next-stability-guard.js' in text:
+                  continue
+              if '<head>' in text:
+                  text = text.replace('<head>', '<head>' + tag, 1)
+              else:
+                  continue
+              f.write_text(text, encoding='utf-8')
+              changed += 1
+          print('Injected into', changed, 'HTML files')
+          PY
+          rm -f .github/workflows/inject-stability-guard.yml
+
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "fix: load stability guard before Next runtime [skip ci]"
+          git push origin test
