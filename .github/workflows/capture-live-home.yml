@@ -1,4 +1,4 @@
-name: Capture live WeEvolveIT home
+name: Capture live WeEvolveIT site
 
 on:
   push:
@@ -12,11 +12,12 @@ permissions:
 
 env:
   TARGET_URL: https://weevolveit.com/
+  MAX_PAGES: '100'
 
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,66 +33,137 @@ jobs:
           npm install --no-save playwright
           npx playwright install --with-deps chromium
 
-      - name: Capture rendered page and network
+      - name: Crawl site with a real Chromium browser
         run: |
           cat > capture.mjs <<'EOF'
           import { chromium } from 'playwright';
           import fs from 'node:fs';
           import path from 'node:path';
 
+          const startUrl = new URL(process.env.TARGET_URL || 'https://weevolveit.com/');
+          const maxPages = Number(process.env.MAX_PAGES || 100);
           const out = path.resolve('capture-output');
-          fs.mkdirSync(out, { recursive: true });
+          const pagesDir = path.join(out, 'pages');
+          fs.mkdirSync(pagesDir, { recursive: true });
+
+          const queue = [startUrl.href];
+          const queued = new Set(queue);
+          const visited = new Set();
           const loaded = [];
           const failed = [];
+          const pageResults = [];
+
+          function normalizePageUrl(raw) {
+            try {
+              const u = new URL(raw, startUrl);
+              if (u.origin !== startUrl.origin) return null;
+              if (!['http:', 'https:'].includes(u.protocol)) return null;
+              u.hash = '';
+              u.search = '';
+              if (u.pathname.startsWith('/_next/') || u.pathname.startsWith('/api/')) return null;
+              if (/\.(?:png|jpe?g|webp|gif|svg|ico|css|js|mjs|map|woff2?|ttf|otf|mp4|webm|mov|avi|pdf|zip|xml|txt|json|wasm|glb|gltf|bin)$/i.test(u.pathname)) return null;
+              u.pathname = u.pathname.replace(/\/+/g, '/');
+              if (u.pathname.length > 1) u.pathname = u.pathname.replace(/\/$/, '');
+              return u.href;
+            } catch {
+              return null;
+            }
+          }
+
+          function pagePath(url) {
+            const u = new URL(url);
+            let p = decodeURIComponent(u.pathname).replace(/^\/+|\/+$/g, '');
+            if (!p) p = 'home';
+            p = p.replace(/[^a-zA-Z0-9._/-]+/g, '-');
+            return path.join(pagesDir, p, 'index.html');
+          }
 
           const browser = await chromium.launch({ headless: true });
           const context = await browser.newContext({
             viewport: { width: 1440, height: 1000 },
             recordHar: {
-              path: path.join(out, 'weevolveit-home.har'),
-              content: 'embed',
+              path: path.join(out, 'weevolveit-full.har.zip'),
+              content: 'attach',
               mode: 'full'
             }
           });
 
-          const page = await context.newPage();
-          page.on('response', response => {
+          context.on('response', response => {
             loaded.push({
+              page: response.request().frame()?.url() || '',
               url: response.url(),
               status: response.status(),
               type: response.request().resourceType(),
               contentType: response.headers()['content-type'] || ''
             });
           });
-          page.on('requestfailed', request => {
+
+          context.on('requestfailed', request => {
             failed.push({
+              page: request.frame()?.url() || '',
               url: request.url(),
               type: request.resourceType(),
               error: request.failure()?.errorText || 'unknown'
             });
           });
 
-          await page.goto(process.env.TARGET_URL, { waitUntil: 'domcontentloaded', timeout: 120000 });
-          await page.waitForTimeout(5000);
+          const page = await context.newPage();
 
-          const height = await page.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
-          for (let y = 0; y <= height + 1200; y += 700) {
-            await page.evaluate(v => window.scrollTo({ top: v, behavior: 'instant' }), y);
-            await page.waitForTimeout(500);
+          while (queue.length && visited.size < maxPages) {
+            const url = queue.shift();
+            if (!url || visited.has(url)) continue;
+            visited.add(url);
+            const started = Date.now();
+            let status = null;
+            let title = '';
+            let linksFound = 0;
+
+            console.log(`PAGE ${visited.size}/${maxPages}: ${url}`);
+            try {
+              const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 90000 });
+              status = response?.status() ?? null;
+              await page.waitForTimeout(2500);
+
+              const height = await page.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
+              for (let y = 0; y <= height + 1000; y += 850) {
+                await page.evaluate(v => window.scrollTo({ top: v, behavior: 'instant' }), y);
+                await page.waitForTimeout(220);
+              }
+              await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+              await page.waitForTimeout(900);
+
+              title = await page.title().catch(() => '');
+
+              const hrefs = await page.locator('a[href]').evaluateAll(nodes => nodes.map(a => a.href));
+              for (const href of hrefs) {
+                const normalized = normalizePageUrl(href);
+                if (normalized && !visited.has(normalized) && !queued.has(normalized)) {
+                  queue.push(normalized);
+                  queued.add(normalized);
+                  linksFound++;
+                }
+              }
+
+              const html = await page.content();
+              const file = pagePath(url);
+              fs.mkdirSync(path.dirname(file), { recursive: true });
+              fs.writeFileSync(file, html);
+
+              if (url === startUrl.href || url === startUrl.origin + '/') {
+                await page.screenshot({ path: path.join(out, 'home-full.png'), fullPage: true });
+              }
+
+              pageResults.push({ url, status, title, linksFound, ms: Date.now() - started, saved: path.relative(out, file) });
+            } catch (error) {
+              pageResults.push({ url, status, title, linksFound, ms: Date.now() - started, error: String(error) });
+              console.error(`ERROR ${url}: ${error}`);
+            }
           }
-          await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-          await page.waitForTimeout(2500);
 
-          try {
-            const services = page.locator('a[href="/services"]').first();
-            await services.hover({ timeout: 5000 });
-            await page.waitForTimeout(1500);
-          } catch {}
-
-          fs.writeFileSync(path.join(out, 'rendered-home.html'), await page.content());
+          fs.writeFileSync(path.join(out, 'pages.json'), JSON.stringify(pageResults, null, 2));
           fs.writeFileSync(path.join(out, 'loaded-resources.json'), JSON.stringify(loaded, null, 2));
           fs.writeFileSync(path.join(out, 'failed-requests.json'), JSON.stringify(failed, null, 2));
-          await page.screenshot({ path: path.join(out, 'home-full.png'), fullPage: true });
+          fs.writeFileSync(path.join(out, 'queued-unvisited.json'), JSON.stringify(queue, null, 2));
 
           await context.close();
           await browser.close();
@@ -102,20 +174,24 @@ jobs:
         run: |
           node - <<'EOF'
           const fs = require('fs');
+          const pages = JSON.parse(fs.readFileSync('capture-output/pages.json','utf8'));
           const data = JSON.parse(fs.readFileSync('capture-output/loaded-resources.json','utf8'));
           const failed = JSON.parse(fs.readFileSync('capture-output/failed-requests.json','utf8'));
           const next = data.filter(x => x.url.includes('/_next/'));
+          const uniqueNext = new Set(next.map(x => x.url.split('?')[0]));
+          console.log(`Pages visited: ${pages.length}`);
           console.log(`Loaded requests: ${data.length}`);
           console.log(`/_next/ requests: ${next.length}`);
+          console.log(`Unique /_next/ resources: ${uniqueNext.size}`);
           console.log(`Failed requests: ${failed.length}`);
-          console.log('Sample Next resources:');
-          console.log(next.slice(0, 30).map(x => `${x.status} ${x.type} ${x.url}`).join('\n'));
+          console.log('Pages:');
+          console.log(pages.map(x => `${x.status ?? '-'} ${x.url}${x.error ? ' ERROR' : ''}`).join('\n'));
           EOF
 
-      - name: Upload capture artifact
+      - name: Upload full capture artifact
         uses: actions/upload-artifact@v4
         with:
-          name: weevolveit-live-home-capture
+          name: weevolveit-live-full-capture
           path: capture-output/
           if-no-files-found: error
           retention-days: 7
