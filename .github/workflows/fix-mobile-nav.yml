@@ -1,0 +1,55 @@
+name: Fix mobile navigation
+
+on:
+  push:
+    branches: [test]
+    paths:
+      - '.github/workflows/fix-mobile-nav.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: test
+          fetch-depth: 0
+
+      - name: Repair missing header chunk alias and inject mobile fallback
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SRC='_next/static/chunks/01tyiq_6dziyl9fa5.js'
+          DST='_next/static/chunks/01tyiq_6dziyl.js'
+          if [ -f "$SRC" ] && [ ! -f "$DST" ]; then
+            cp "$SRC" "$DST"
+          fi
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+          tag = '<script src="mobile-nav-fix.js" defer></script>'
+          if tag not in text:
+              if '</body>' in text:
+                  text = text.replace('</body>', tag + '</body>', 1)
+              else:
+                  text += tag
+              p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/fix-mobile-nav.yml
+          git add index.html mobile-nav-fix.js _next/static/chunks/01tyiq_6dziyl.js
+          git commit -m 'fix: prevent mobile menu from booting stuck open'
+          git push origin test
