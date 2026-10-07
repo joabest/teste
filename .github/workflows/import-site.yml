@@ -33,7 +33,7 @@ jobs:
             -O '/tmp/weevolve-mirror' \
             '+*.png' '+*.gif' '+*.jpg' '+*.jpeg' '+*.css' '+*.js' \
             '-ad.doubleclick.net/*' '-mime:application/foobar' \
-            -q -C2 -p3 -A25000 \
+            -q -C2 -p3 -c16 \
             -F 'Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)' \
             || true
 
