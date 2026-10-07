@@ -1,0 +1,4 @@
+
+/* Mirror fidelity fallbacks. Original app CSS remains authoritative. */
+img[src*="/logos/clients/"] { filter: grayscale(1); opacity: .72; transition: filter .25s ease, opacity .25s ease; }
+img[src*="/logos/clients/"]:hover { filter: grayscale(0); opacity: 1; }
