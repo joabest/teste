@@ -1,0 +1,121 @@
+name: Capture live WeEvolveIT home
+
+on:
+  push:
+    branches: [test]
+    paths:
+      - '.github/workflows/capture-live-home.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  TARGET_URL: https://weevolveit.com/
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Capture rendered page and network
+        run: |
+          cat > capture.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+          import path from 'node:path';
+
+          const out = path.resolve('capture-output');
+          fs.mkdirSync(out, { recursive: true });
+          const loaded = [];
+          const failed = [];
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({
+            viewport: { width: 1440, height: 1000 },
+            recordHar: {
+              path: path.join(out, 'weevolveit-home.har'),
+              content: 'embed',
+              mode: 'full'
+            }
+          });
+
+          const page = await context.newPage();
+          page.on('response', response => {
+            loaded.push({
+              url: response.url(),
+              status: response.status(),
+              type: response.request().resourceType(),
+              contentType: response.headers()['content-type'] || ''
+            });
+          });
+          page.on('requestfailed', request => {
+            failed.push({
+              url: request.url(),
+              type: request.resourceType(),
+              error: request.failure()?.errorText || 'unknown'
+            });
+          });
+
+          await page.goto(process.env.TARGET_URL, { waitUntil: 'domcontentloaded', timeout: 120000 });
+          await page.waitForTimeout(5000);
+
+          const height = await page.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
+          for (let y = 0; y <= height + 1200; y += 700) {
+            await page.evaluate(v => window.scrollTo({ top: v, behavior: 'instant' }), y);
+            await page.waitForTimeout(500);
+          }
+          await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+          await page.waitForTimeout(2500);
+
+          try {
+            const services = page.locator('a[href="/services"]').first();
+            await services.hover({ timeout: 5000 });
+            await page.waitForTimeout(1500);
+          } catch {}
+
+          fs.writeFileSync(path.join(out, 'rendered-home.html'), await page.content());
+          fs.writeFileSync(path.join(out, 'loaded-resources.json'), JSON.stringify(loaded, null, 2));
+          fs.writeFileSync(path.join(out, 'failed-requests.json'), JSON.stringify(failed, null, 2));
+          await page.screenshot({ path: path.join(out, 'home-full.png'), fullPage: true });
+
+          await context.close();
+          await browser.close();
+          EOF
+          node capture.mjs
+
+      - name: Summarize capture
+        run: |
+          node - <<'EOF'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('capture-output/loaded-resources.json','utf8'));
+          const failed = JSON.parse(fs.readFileSync('capture-output/failed-requests.json','utf8'));
+          const next = data.filter(x => x.url.includes('/_next/'));
+          console.log(`Loaded requests: ${data.length}`);
+          console.log(`/_next/ requests: ${next.length}`);
+          console.log(`Failed requests: ${failed.length}`);
+          console.log('Sample Next resources:');
+          console.log(next.slice(0, 30).map(x => `${x.status} ${x.type} ${x.url}`).join('\n'));
+          EOF
+
+      - name: Upload capture artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: weevolveit-live-home-capture
+          path: capture-output/
+          if-no-files-found: error
+          retention-days: 7
