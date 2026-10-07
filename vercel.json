@@ -1,4 +1,1444 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/ai-business-check",
+      "destination": "/ai-business-check.html"
+    },
+    {
+      "source": "/ai-check",
+      "destination": "/ai-check.html"
+    },
+    {
+      "source": "/ai-visibility-check",
+      "destination": "/ai-visibility-check.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/blog.html"
+    },
+    {
+      "source": "/blog/agentic-ai-vs-generative-ai-vs-chatbots",
+      "destination": "/blog/agentic-ai-vs-generative-ai-vs-chatbots.html"
+    },
+    {
+      "source": "/blog/ai-agent-development-cost",
+      "destination": "/blog/ai-agent-development-cost.html"
+    },
+    {
+      "source": "/blog/ai-agents-for-erp",
+      "destination": "/blog/ai-agents-for-erp.html"
+    },
+    {
+      "source": "/blog/ai-business-process-automation",
+      "destination": "/blog/ai-business-process-automation.html"
+    },
+    {
+      "source": "/blog/ai-in-data-analytics",
+      "destination": "/blog/ai-in-data-analytics.html"
+    },
+    {
+      "source": "/blog/ai-marketing-automation",
+      "destination": "/blog/ai-marketing-automation.html"
+    },
+    {
+      "source": "/blog/ai-visibility-index-mexico-2026",
+      "destination": "/blog/ai-visibility-index-mexico-2026.html"
+    },
+    {
+      "source": "/blog/ai-vs-automation",
+      "destination": "/blog/ai-vs-automation.html"
+    },
+    {
+      "source": "/blog/aws-vs-azure-vs-gcp",
+      "destination": "/blog/aws-vs-azure-vs-gcp.html"
+    },
+    {
+      "source": "/blog/benefits-of-cloud-migration",
+      "destination": "/blog/benefits-of-cloud-migration.html"
+    },
+    {
+      "source": "/blog/best-ai-automation-tools-2026",
+      "destination": "/blog/best-ai-automation-tools-2026.html"
+    },
+    {
+      "source": "/blog/best-geo-tools-2026",
+      "destination": "/blog/best-geo-tools-2026.html"
+    },
+    {
+      "source": "/blog/best-nearshore-software-development-companies-mexico",
+      "destination": "/blog/best-nearshore-software-development-companies-mexico.html"
+    },
+    {
+      "source": "/blog/best-web-development-companies-texas-monterrey",
+      "destination": "/blog/best-web-development-companies-texas-monterrey.html"
+    },
+    {
+      "source": "/blog/build-vs-buy-software",
+      "destination": "/blog/build-vs-buy-software.html"
+    },
+    {
+      "source": "/blog/category/ai",
+      "destination": "/blog/category/ai.html"
+    },
+    {
+      "source": "/blog/category/guides",
+      "destination": "/blog/category/guides.html"
+    },
+    {
+      "source": "/blog/category/insights",
+      "destination": "/blog/category/insights.html"
+    },
+    {
+      "source": "/blog/category/news",
+      "destination": "/blog/category/news.html"
+    },
+    {
+      "source": "/blog/cloud-cost-optimization-finops",
+      "destination": "/blog/cloud-cost-optimization-finops.html"
+    },
+    {
+      "source": "/blog/cloud-migration-challenges",
+      "destination": "/blog/cloud-migration-challenges.html"
+    },
+    {
+      "source": "/blog/cloud-migration-strategy",
+      "destination": "/blog/cloud-migration-strategy.html"
+    },
+    {
+      "source": "/blog/crm-implementation-best-practices",
+      "destination": "/blog/crm-implementation-best-practices.html"
+    },
+    {
+      "source": "/blog/crm-implementation-cost",
+      "destination": "/blog/crm-implementation-cost.html"
+    },
+    {
+      "source": "/blog/cross-platform-vs-native",
+      "destination": "/blog/cross-platform-vs-native.html"
+    },
+    {
+      "source": "/blog/custom-healthcare-software",
+      "destination": "/blog/custom-healthcare-software.html"
+    },
+    {
+      "source": "/blog/custom-software-development-cost",
+      "destination": "/blog/custom-software-development-cost.html"
+    },
+    {
+      "source": "/blog/custom-software-development-process",
+      "destination": "/blog/custom-software-development-process.html"
+    },
+    {
+      "source": "/blog/custom-software-vs-off-the-shelf",
+      "destination": "/blog/custom-software-vs-off-the-shelf.html"
+    },
+    {
+      "source": "/blog/custom-website-cost",
+      "destination": "/blog/custom-website-cost.html"
+    },
+    {
+      "source": "/blog/custom-website-vs-template",
+      "destination": "/blog/custom-website-vs-template.html"
+    },
+    {
+      "source": "/blog/data-analytics-services-cost",
+      "destination": "/blog/data-analytics-services-cost.html"
+    },
+    {
+      "source": "/blog/data-analytics-vs-bi-vs-data-science",
+      "destination": "/blog/data-analytics-vs-bi-vs-data-science.html"
+    },
+    {
+      "source": "/blog/data-engineering-vs-data-analytics",
+      "destination": "/blog/data-engineering-vs-data-analytics.html"
+    },
+    {
+      "source": "/blog/digital-transformation-in-healthcare",
+      "destination": "/blog/digital-transformation-in-healthcare.html"
+    },
+    {
+      "source": "/blog/digital-transformation-strategy",
+      "destination": "/blog/digital-transformation-strategy.html"
+    },
+    {
+      "source": "/blog/digital-transformation-trends-2026",
+      "destination": "/blog/digital-transformation-trends-2026.html"
+    },
+    {
+      "source": "/blog/does-seo-still-matter-ai-search",
+      "destination": "/blog/does-seo-still-matter-ai-search.html"
+    },
+    {
+      "source": "/blog/ecommerce-seo",
+      "destination": "/blog/ecommerce-seo.html"
+    },
+    {
+      "source": "/blog/enterprise-seo",
+      "destination": "/blog/enterprise-seo.html"
+    },
+    {
+      "source": "/blog/erp-implementation-best-practices",
+      "destination": "/blog/erp-implementation-best-practices.html"
+    },
+    {
+      "source": "/blog/erp-implementation-cost",
+      "destination": "/blog/erp-implementation-cost.html"
+    },
+    {
+      "source": "/blog/erp-implementation-phases",
+      "destination": "/blog/erp-implementation-phases.html"
+    },
+    {
+      "source": "/blog/geo-vs-seo-vs-aeo",
+      "destination": "/blog/geo-vs-seo-vs-aeo.html"
+    },
+    {
+      "source": "/blog/google-ads-vs-facebook-ads",
+      "destination": "/blog/google-ads-vs-facebook-ads.html"
+    },
+    {
+      "source": "/blog/healthcare-data-analytics",
+      "destination": "/blog/healthcare-data-analytics.html"
+    },
+    {
+      "source": "/blog/how-long-does-seo-take",
+      "destination": "/blog/how-long-does-seo-take.html"
+    },
+    {
+      "source": "/blog/how-long-to-build-a-website",
+      "destination": "/blog/how-long-to-build-a-website.html"
+    },
+    {
+      "source": "/blog/how-long-to-build-an-app",
+      "destination": "/blog/how-long-to-build-an-app.html"
+    },
+    {
+      "source": "/blog/how-to-automate-a-business-process",
+      "destination": "/blog/how-to-automate-a-business-process.html"
+    },
+    {
+      "source": "/blog/how-to-build-a-mobile-app",
+      "destination": "/blog/how-to-build-a-mobile-app.html"
+    },
+    {
+      "source": "/blog/how-to-build-an-ai-agent",
+      "destination": "/blog/how-to-build-an-ai-agent.html"
+    },
+    {
+      "source": "/blog/how-to-build-an-ai-agent-for-whatsapp",
+      "destination": "/blog/how-to-build-an-ai-agent-for-whatsapp.html"
+    },
+    {
+      "source": "/blog/how-to-choose-a-custom-software-company",
+      "destination": "/blog/how-to-choose-a-custom-software-company.html"
+    },
+    {
+      "source": "/blog/how-to-choose-a-ppc-agency",
+      "destination": "/blog/how-to-choose-a-ppc-agency.html"
+    },
+    {
+      "source": "/blog/how-to-choose-an-erp",
+      "destination": "/blog/how-to-choose-an-erp.html"
+    },
+    {
+      "source": "/blog/how-to-choose-an-seo-agency",
+      "destination": "/blog/how-to-choose-an-seo-agency.html"
+    },
+    {
+      "source": "/blog/how-to-get-cited-perplexity-ai-overviews",
+      "destination": "/blog/how-to-get-cited-perplexity-ai-overviews.html"
+    },
+    {
+      "source": "/blog/how-to-implement-a-crm",
+      "destination": "/blog/how-to-implement-a-crm.html"
+    },
+    {
+      "source": "/blog/how-to-integrate-legacy-systems",
+      "destination": "/blog/how-to-integrate-legacy-systems.html"
+    },
+    {
+      "source": "/blog/how-to-rank-on-chatgpt",
+      "destination": "/blog/how-to-rank-on-chatgpt.html"
+    },
+    {
+      "source": "/blog/iiot-vs-iot",
+      "destination": "/blog/iiot-vs-iot.html"
+    },
+    {
+      "source": "/blog/industrial-iot-applications",
+      "destination": "/blog/industrial-iot-applications.html"
+    },
+    {
+      "source": "/blog/industrial-iot-cost",
+      "destination": "/blog/industrial-iot-cost.html"
+    },
+    {
+      "source": "/blog/industry-4-0-smart-factory-roadmap",
+      "destination": "/blog/industry-4-0-smart-factory-roadmap.html"
+    },
+    {
+      "source": "/blog/iot-predictive-maintenance",
+      "destination": "/blog/iot-predictive-maintenance.html"
+    },
+    {
+      "source": "/blog/legacy-modernization-approaches-7-rs",
+      "destination": "/blog/legacy-modernization-approaches-7-rs.html"
+    },
+    {
+      "source": "/blog/legacy-modernization-strategy",
+      "destination": "/blog/legacy-modernization-strategy.html"
+    },
+    {
+      "source": "/blog/legacy-modernization-tools-2026",
+      "destination": "/blog/legacy-modernization-tools-2026.html"
+    },
+    {
+      "source": "/blog/lift-and-shift-vs-re-architecting",
+      "destination": "/blog/lift-and-shift-vs-re-architecting.html"
+    },
+    {
+      "source": "/blog/llm-seo",
+      "destination": "/blog/llm-seo.html"
+    },
+    {
+      "source": "/blog/local-seo-complete-guide",
+      "destination": "/blog/local-seo-complete-guide.html"
+    },
+    {
+      "source": "/blog/lower-cost-per-acquisition",
+      "destination": "/blog/lower-cost-per-acquisition.html"
+    },
+    {
+      "source": "/blog/mobile-app-development-cost",
+      "destination": "/blog/mobile-app-development-cost.html"
+    },
+    {
+      "source": "/blog/modernize-vs-rebuild",
+      "destination": "/blog/modernize-vs-rebuild.html"
+    },
+    {
+      "source": "/blog/nearshore-software-development-rates",
+      "destination": "/blog/nearshore-software-development-rates.html"
+    },
+    {
+      "source": "/blog/nearshore-vs-offshore",
+      "destination": "/blog/nearshore-vs-offshore.html"
+    },
+    {
+      "source": "/blog/netsuite-vs-odoo-vs-dynamics",
+      "destination": "/blog/netsuite-vs-odoo-vs-dynamics.html"
+    },
+    {
+      "source": "/blog/on-premise-to-cloud-migration-checklist",
+      "destination": "/blog/on-premise-to-cloud-migration-checklist.html"
+    },
+    {
+      "source": "/blog/ppc-management-cost",
+      "destination": "/blog/ppc-management-cost.html"
+    },
+    {
+      "source": "/blog/react-native-vs-flutter",
+      "destination": "/blog/react-native-vs-flutter.html"
+    },
+    {
+      "source": "/blog/s/11zd_ofpxdf0k9fa5",
+      "destination": "/blog/s/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/blog/salesforce-vs-hubspot-vs-zoho",
+      "destination": "/blog/salesforce-vs-hubspot-vs-zoho.html"
+    },
+    {
+      "source": "/blog/seo-vs-ppc",
+      "destination": "/blog/seo-vs-ppc.html"
+    },
+    {
+      "source": "/blog/technical-seo-checklist-2026",
+      "destination": "/blog/technical-seo-checklist-2026.html"
+    },
+    {
+      "source": "/blog/top-digital-transformation-consulting-firms",
+      "destination": "/blog/top-digital-transformation-consulting-firms.html"
+    },
+    {
+      "source": "/blog/web-app-vs-website",
+      "destination": "/blog/web-app-vs-website.html"
+    },
+    {
+      "source": "/blog/what-are-seo-services",
+      "destination": "/blog/what-are-seo-services.html"
+    },
+    {
+      "source": "/blog/what-is-ai-automation",
+      "destination": "/blog/what-is-ai-automation.html"
+    },
+    {
+      "source": "/blog/what-is-ai-erp",
+      "destination": "/blog/what-is-ai-erp.html"
+    },
+    {
+      "source": "/blog/what-is-an-ai-agent",
+      "destination": "/blog/what-is-an-ai-agent.html"
+    },
+    {
+      "source": "/blog/what-is-answer-engine-optimization",
+      "destination": "/blog/what-is-answer-engine-optimization.html"
+    },
+    {
+      "source": "/blog/what-is-data-analytics",
+      "destination": "/blog/what-is-data-analytics.html"
+    },
+    {
+      "source": "/blog/what-is-digital-transformation",
+      "destination": "/blog/what-is-digital-transformation.html"
+    },
+    {
+      "source": "/blog/what-is-generative-engine-optimization",
+      "destination": "/blog/what-is-generative-engine-optimization.html"
+    },
+    {
+      "source": "/blog/what-is-geo-and-aeo",
+      "destination": "/blog/what-is-geo-and-aeo.html"
+    },
+    {
+      "source": "/blog/what-is-industrial-iot",
+      "destination": "/blog/what-is-industrial-iot.html"
+    },
+    {
+      "source": "/blog/what-is-legacy-system-modernization",
+      "destination": "/blog/what-is-legacy-system-modernization.html"
+    },
+    {
+      "source": "/blog/what-is-mobile-app-development",
+      "destination": "/blog/what-is-mobile-app-development.html"
+    },
+    {
+      "source": "/blog/what-is-nearshore-software-development",
+      "destination": "/blog/what-is-nearshore-software-development.html"
+    },
+    {
+      "source": "/blog/what-is-ppc",
+      "destination": "/blog/what-is-ppc.html"
+    },
+    {
+      "source": "/blog/what-is-web-development",
+      "destination": "/blog/what-is-web-development.html"
+    },
+    {
+      "source": "/blog/what-it-takes-to-get-nominated-on-awwwards",
+      "destination": "/blog/what-it-takes-to-get-nominated-on-awwwards.html"
+    },
+    {
+      "source": "/blog/why-ai-agents-fail-in-production",
+      "destination": "/blog/why-ai-agents-fail-in-production.html"
+    },
+    {
+      "source": "/blog/why-crm-implementations-fail",
+      "destination": "/blog/why-crm-implementations-fail.html"
+    },
+    {
+      "source": "/blog/why-digital-transformations-fail",
+      "destination": "/blog/why-digital-transformations-fail.html"
+    },
+    {
+      "source": "/blog/why-erp-implementations-fail",
+      "destination": "/blog/why-erp-implementations-fail.html"
+    },
+    {
+      "source": "/blog/why-isnt-my-business-showing-up-in-chatgpt",
+      "destination": "/blog/why-isnt-my-business-showing-up-in-chatgpt.html"
+    },
+    {
+      "source": "/business-diagnosis",
+      "destination": "/business-diagnosis.html"
+    },
+    {
+      "source": "/case-studies",
+      "destination": "/case-studies.html"
+    },
+    {
+      "source": "/case-studies/industries/education",
+      "destination": "/case-studies/industries/education.html"
+    },
+    {
+      "source": "/case-studies/industries/gaming-and-betting",
+      "destination": "/case-studies/industries/gaming-and-betting.html"
+    },
+    {
+      "source": "/case-studies/industries/healthcare",
+      "destination": "/case-studies/industries/healthcare.html"
+    },
+    {
+      "source": "/case-studies/industries/hospitality-and-real-estate",
+      "destination": "/case-studies/industries/hospitality-and-real-estate.html"
+    },
+    {
+      "source": "/case-studies/industries/logistics",
+      "destination": "/case-studies/industries/logistics.html"
+    },
+    {
+      "source": "/case-studies/industries/logistics/delivery-evidence-automation-google-workspace",
+      "destination": "/case-studies/industries/logistics/delivery-evidence-automation-google-workspace.html"
+    },
+    {
+      "source": "/case-studies/industries/logistics/tic/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/case-studies/industries/logistics/tic/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/case-studies/industries/manufacturing",
+      "destination": "/case-studies/industries/manufacturing.html"
+    },
+    {
+      "source": "/case-studies/industries/media-and-publishing",
+      "destination": "/case-studies/industries/media-and-publishing.html"
+    },
+    {
+      "source": "/case-studies/industries/music-and-entertainment",
+      "destination": "/case-studies/industries/music-and-entertainment.html"
+    },
+    {
+      "source": "/case-studies/industries/non-profits",
+      "destination": "/case-studies/industries/non-profits.html"
+    },
+    {
+      "source": "/case-studies/industries/retail-and-ecommerce",
+      "destination": "/case-studies/industries/retail-and-ecommerce.html"
+    },
+    {
+      "source": "/case-studies/industries/retail-and-ecommerce/technical-seo-b2b-hardware-catalog-laravel",
+      "destination": "/case-studies/industries/retail-and-ecommerce/technical-seo-b2b-hardware-catalog-laravel.html"
+    },
+    {
+      "source": "/case-studies/industries/retail-and-ecommerce/tic/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/case-studies/industries/retail-and-ecommerce/tic/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/case-studies/industries/technology-and-saas",
+      "destination": "/case-studies/industries/technology-and-saas.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/es",
+      "destination": "/es.html"
+    },
+    {
+      "source": "/es/about",
+      "destination": "/es/about.html"
+    },
+    {
+      "source": "/es/ai-business-check",
+      "destination": "/es/ai-business-check.html"
+    },
+    {
+      "source": "/es/ai-check",
+      "destination": "/es/ai-check.html"
+    },
+    {
+      "source": "/es/blog",
+      "destination": "/es/blog.html"
+    },
+    {
+      "source": "/es/blog/agentes-de-ia-para-erp",
+      "destination": "/es/blog/agentes-de-ia-para-erp.html"
+    },
+    {
+      "source": "/es/blog/analitica-de-datos-en-salud",
+      "destination": "/es/blog/analitica-de-datos-en-salud.html"
+    },
+    {
+      "source": "/es/blog/analitica-de-datos-vs-bi-vs-ciencia-de-datos",
+      "destination": "/es/blog/analitica-de-datos-vs-bi-vs-ciencia-de-datos.html"
+    },
+    {
+      "source": "/es/blog/aplicaciones-de-iot-industrial",
+      "destination": "/es/blog/aplicaciones-de-iot-industrial.html"
+    },
+    {
+      "source": "/es/blog/automatizacion-de-marketing-con-ia",
+      "destination": "/es/blog/automatizacion-de-marketing-con-ia.html"
+    },
+    {
+      "source": "/es/blog/automatizacion-de-procesos-de-negocio-con-ia",
+      "destination": "/es/blog/automatizacion-de-procesos-de-negocio-con-ia.html"
+    },
+    {
+      "source": "/es/blog/aws-vs-azure-vs-gcp-cual-nube-elegir",
+      "destination": "/es/blog/aws-vs-azure-vs-gcp-cual-nube-elegir.html"
+    },
+    {
+      "source": "/es/blog/beneficios-de-la-migracion-a-la-nube",
+      "destination": "/es/blog/beneficios-de-la-migracion-a-la-nube.html"
+    },
+    {
+      "source": "/es/blog/category/ai",
+      "destination": "/es/blog/category/ai.html"
+    },
+    {
+      "source": "/es/blog/category/guides",
+      "destination": "/es/blog/category/guides.html"
+    },
+    {
+      "source": "/es/blog/category/insights",
+      "destination": "/es/blog/category/insights.html"
+    },
+    {
+      "source": "/es/blog/category/news",
+      "destination": "/es/blog/category/news.html"
+    },
+    {
+      "source": "/es/blog/checklist-migracion-on-premise-a-la-nube",
+      "destination": "/es/blog/checklist-migracion-on-premise-a-la-nube.html"
+    },
+    {
+      "source": "/es/blog/checklist-seo-tecnico-2026",
+      "destination": "/es/blog/checklist-seo-tecnico-2026.html"
+    },
+    {
+      "source": "/es/blog/como-automatizar-un-proceso-de-negocio",
+      "destination": "/es/blog/como-automatizar-un-proceso-de-negocio.html"
+    },
+    {
+      "source": "/es/blog/como-construir-un-agente-de-ia",
+      "destination": "/es/blog/como-construir-un-agente-de-ia.html"
+    },
+    {
+      "source": "/es/blog/como-crear-un-agente-de-ia-para-whatsapp",
+      "destination": "/es/blog/como-crear-un-agente-de-ia-para-whatsapp.html"
+    },
+    {
+      "source": "/es/blog/como-crear-una-app-movil",
+      "destination": "/es/blog/como-crear-una-app-movil.html"
+    },
+    {
+      "source": "/es/blog/como-elegir-un-erp",
+      "destination": "/es/blog/como-elegir-un-erp.html"
+    },
+    {
+      "source": "/es/blog/como-elegir-una-agencia-de-ppc",
+      "destination": "/es/blog/como-elegir-una-agencia-de-ppc.html"
+    },
+    {
+      "source": "/es/blog/como-elegir-una-agencia-seo",
+      "destination": "/es/blog/como-elegir-una-agencia-seo.html"
+    },
+    {
+      "source": "/es/blog/como-elegir-una-empresa-de-software-a-la-medida",
+      "destination": "/es/blog/como-elegir-una-empresa-de-software-a-la-medida.html"
+    },
+    {
+      "source": "/es/blog/como-implementar-un-crm",
+      "destination": "/es/blog/como-implementar-un-crm.html"
+    },
+    {
+      "source": "/es/blog/como-integrar-sistemas-legados",
+      "destination": "/es/blog/como-integrar-sistemas-legados.html"
+    },
+    {
+      "source": "/es/blog/como-posicionar-en-chatgpt",
+      "destination": "/es/blog/como-posicionar-en-chatgpt.html"
+    },
+    {
+      "source": "/es/blog/como-ser-citado-perplexity-ai-overviews",
+      "destination": "/es/blog/como-ser-citado-perplexity-ai-overviews.html"
+    },
+    {
+      "source": "/es/blog/construir-vs-comprar-software",
+      "destination": "/es/blog/construir-vs-comprar-software.html"
+    },
+    {
+      "source": "/es/blog/costo-desarrollo-app-movil",
+      "destination": "/es/blog/costo-desarrollo-app-movil.html"
+    },
+    {
+      "source": "/es/blog/costo-desarrollo-software-a-la-medida",
+      "destination": "/es/blog/costo-desarrollo-software-a-la-medida.html"
+    },
+    {
+      "source": "/es/blog/costo-gestion-ppc",
+      "destination": "/es/blog/costo-gestion-ppc.html"
+    },
+    {
+      "source": "/es/blog/costo-implementacion-crm",
+      "destination": "/es/blog/costo-implementacion-crm.html"
+    },
+    {
+      "source": "/es/blog/costo-implementacion-erp",
+      "destination": "/es/blog/costo-implementacion-erp.html"
+    },
+    {
+      "source": "/es/blog/costo-iot-industrial",
+      "destination": "/es/blog/costo-iot-industrial.html"
+    },
+    {
+      "source": "/es/blog/cuanto-cuesta-desarrollar-un-agente-de-ia",
+      "destination": "/es/blog/cuanto-cuesta-desarrollar-un-agente-de-ia.html"
+    },
+    {
+      "source": "/es/blog/cuanto-cuesta-un-sitio-web-a-la-medida",
+      "destination": "/es/blog/cuanto-cuesta-un-sitio-web-a-la-medida.html"
+    },
+    {
+      "source": "/es/blog/cuanto-cuestan-los-servicios-de-analitica-de-datos",
+      "destination": "/es/blog/cuanto-cuestan-los-servicios-de-analitica-de-datos.html"
+    },
+    {
+      "source": "/es/blog/cuanto-tarda-el-seo-en-funcionar",
+      "destination": "/es/blog/cuanto-tarda-el-seo-en-funcionar.html"
+    },
+    {
+      "source": "/es/blog/cuanto-tarda-en-desarrollarse-una-app",
+      "destination": "/es/blog/cuanto-tarda-en-desarrollarse-una-app.html"
+    },
+    {
+      "source": "/es/blog/cuanto-tarda-en-hacerse-una-pagina-web",
+      "destination": "/es/blog/cuanto-tarda-en-hacerse-una-pagina-web.html"
+    },
+    {
+      "source": "/es/blog/enfoques-modernizacion-legacy-7-rs",
+      "destination": "/es/blog/enfoques-modernizacion-legacy-7-rs.html"
+    },
+    {
+      "source": "/es/blog/estrategia-de-migracion-a-la-nube",
+      "destination": "/es/blog/estrategia-de-migracion-a-la-nube.html"
+    },
+    {
+      "source": "/es/blog/estrategia-de-transformacion-digital",
+      "destination": "/es/blog/estrategia-de-transformacion-digital.html"
+    },
+    {
+      "source": "/es/blog/estrategia-modernizacion-legacy",
+      "destination": "/es/blog/estrategia-modernizacion-legacy.html"
+    },
+    {
+      "source": "/es/blog/fases-implementacion-erp",
+      "destination": "/es/blog/fases-implementacion-erp.html"
+    },
+    {
+      "source": "/es/blog/geo-vs-seo-vs-aeo-diferencia",
+      "destination": "/es/blog/geo-vs-seo-vs-aeo-diferencia.html"
+    },
+    {
+      "source": "/es/blog/google-ads-vs-facebook-ads-cual-elegir",
+      "destination": "/es/blog/google-ads-vs-facebook-ads-cual-elegir.html"
+    },
+    {
+      "source": "/es/blog/guia-completa-seo-local",
+      "destination": "/es/blog/guia-completa-seo-local.html"
+    },
+    {
+      "source": "/es/blog/herramientas-de-modernizacion-de-sistemas-heredados-2026",
+      "destination": "/es/blog/herramientas-de-modernizacion-de-sistemas-heredados-2026.html"
+    },
+    {
+      "source": "/es/blog/ia-agentica-vs-ia-generativa-vs-chatbots",
+      "destination": "/es/blog/ia-agentica-vs-ia-generativa-vs-chatbots.html"
+    },
+    {
+      "source": "/es/blog/ia-en-analitica-de-datos",
+      "destination": "/es/blog/ia-en-analitica-de-datos.html"
+    },
+    {
+      "source": "/es/blog/ia-vs-automatizacion",
+      "destination": "/es/blog/ia-vs-automatizacion.html"
+    },
+    {
+      "source": "/es/blog/iiot-vs-iot-diferencia",
+      "destination": "/es/blog/iiot-vs-iot-diferencia.html"
+    },
+    {
+      "source": "/es/blog/indice-visibilidad-ia-mexico-2026",
+      "destination": "/es/blog/indice-visibilidad-ia-mexico-2026.html"
+    },
+    {
+      "source": "/es/blog/industria-4-0-fabrica-inteligente-hoja-de-ruta",
+      "destination": "/es/blog/industria-4-0-fabrica-inteligente-hoja-de-ruta.html"
+    },
+    {
+      "source": "/es/blog/ingenieria-de-datos-vs-analitica-de-datos",
+      "destination": "/es/blog/ingenieria-de-datos-vs-analitica-de-datos.html"
+    },
+    {
+      "source": "/es/blog/lift-and-shift-vs-rearquitectura",
+      "destination": "/es/blog/lift-and-shift-vs-rearquitectura.html"
+    },
+    {
+      "source": "/es/blog/llm-seo-espanol",
+      "destination": "/es/blog/llm-seo-espanol.html"
+    },
+    {
+      "source": "/es/blog/mantenimiento-predictivo-iot",
+      "destination": "/es/blog/mantenimiento-predictivo-iot.html"
+    },
+    {
+      "source": "/es/blog/mejores-empresas-de-desarrollo-de-software-nearshore-en-mexico",
+      "destination": "/es/blog/mejores-empresas-de-desarrollo-de-software-nearshore-en-mexico.html"
+    },
+    {
+      "source": "/es/blog/mejores-empresas-de-desarrollo-web-en-texas-y-monterrey",
+      "destination": "/es/blog/mejores-empresas-de-desarrollo-web-en-texas-y-monterrey.html"
+    },
+    {
+      "source": "/es/blog/mejores-firmas-de-consultoria-de-transformacion-digital",
+      "destination": "/es/blog/mejores-firmas-de-consultoria-de-transformacion-digital.html"
+    },
+    {
+      "source": "/es/blog/mejores-herramientas-automatizacion-ia-2026",
+      "destination": "/es/blog/mejores-herramientas-automatizacion-ia-2026.html"
+    },
+    {
+      "source": "/es/blog/mejores-herramientas-geo-2026",
+      "destination": "/es/blog/mejores-herramientas-geo-2026.html"
+    },
+    {
+      "source": "/es/blog/mejores-practicas-implementacion-crm",
+      "destination": "/es/blog/mejores-practicas-implementacion-crm.html"
+    },
+    {
+      "source": "/es/blog/mejores-practicas-implementacion-erp",
+      "destination": "/es/blog/mejores-practicas-implementacion-erp.html"
+    },
+    {
+      "source": "/es/blog/modernizar-o-reconstruir-sistema-legado",
+      "destination": "/es/blog/modernizar-o-reconstruir-sistema-legado.html"
+    },
+    {
+      "source": "/es/blog/multiplataforma-vs-nativo",
+      "destination": "/es/blog/multiplataforma-vs-nativo.html"
+    },
+    {
+      "source": "/es/blog/nearshore-vs-offshore-desarrollo-de-software",
+      "destination": "/es/blog/nearshore-vs-offshore-desarrollo-de-software.html"
+    },
+    {
+      "source": "/es/blog/netsuite-vs-odoo-vs-dynamics-cual-erp",
+      "destination": "/es/blog/netsuite-vs-odoo-vs-dynamics-cual-erp.html"
+    },
+    {
+      "source": "/es/blog/optimizacion-de-costos-en-la-nube-finops",
+      "destination": "/es/blog/optimizacion-de-costos-en-la-nube-finops.html"
+    },
+    {
+      "source": "/es/blog/por-que-fallan-las-implementaciones-de-crm",
+      "destination": "/es/blog/por-que-fallan-las-implementaciones-de-crm.html"
+    },
+    {
+      "source": "/es/blog/por-que-fallan-las-implementaciones-de-erp",
+      "destination": "/es/blog/por-que-fallan-las-implementaciones-de-erp.html"
+    },
+    {
+      "source": "/es/blog/por-que-fallan-las-transformaciones-digitales",
+      "destination": "/es/blog/por-que-fallan-las-transformaciones-digitales.html"
+    },
+    {
+      "source": "/es/blog/por-que-fallan-los-agentes-de-ia-en-produccion",
+      "destination": "/es/blog/por-que-fallan-los-agentes-de-ia-en-produccion.html"
+    },
+    {
+      "source": "/es/blog/por-que-mi-negocio-no-aparece-en-chatgpt",
+      "destination": "/es/blog/por-que-mi-negocio-no-aparece-en-chatgpt.html"
+    },
+    {
+      "source": "/es/blog/proceso-desarrollo-software-a-la-medida",
+      "destination": "/es/blog/proceso-desarrollo-software-a-la-medida.html"
+    },
+    {
+      "source": "/es/blog/que-es-el-analisis-de-datos",
+      "destination": "/es/blog/que-es-el-analisis-de-datos.html"
+    },
+    {
+      "source": "/es/blog/que-es-el-desarrollo-de-aplicaciones-moviles",
+      "destination": "/es/blog/que-es-el-desarrollo-de-aplicaciones-moviles.html"
+    },
+    {
+      "source": "/es/blog/que-es-el-desarrollo-de-software-nearshore",
+      "destination": "/es/blog/que-es-el-desarrollo-de-software-nearshore.html"
+    },
+    {
+      "source": "/es/blog/que-es-el-desarrollo-web",
+      "destination": "/es/blog/que-es-el-desarrollo-web.html"
+    },
+    {
+      "source": "/es/blog/que-es-el-iot-industrial",
+      "destination": "/es/blog/que-es-el-iot-industrial.html"
+    },
+    {
+      "source": "/es/blog/que-es-el-ppc",
+      "destination": "/es/blog/que-es-el-ppc.html"
+    },
+    {
+      "source": "/es/blog/que-es-geo-y-aeo",
+      "destination": "/es/blog/que-es-geo-y-aeo.html"
+    },
+    {
+      "source": "/es/blog/que-es-la-automatizacion-con-ia",
+      "destination": "/es/blog/que-es-la-automatizacion-con-ia.html"
+    },
+    {
+      "source": "/es/blog/que-es-la-modernizacion-de-sistemas-heredados",
+      "destination": "/es/blog/que-es-la-modernizacion-de-sistemas-heredados.html"
+    },
+    {
+      "source": "/es/blog/que-es-la-optimizacion-para-motores-de-respuesta",
+      "destination": "/es/blog/que-es-la-optimizacion-para-motores-de-respuesta.html"
+    },
+    {
+      "source": "/es/blog/que-es-la-optimizacion-para-motores-generativos",
+      "destination": "/es/blog/que-es-la-optimizacion-para-motores-generativos.html"
+    },
+    {
+      "source": "/es/blog/que-es-la-transformacion-digital",
+      "destination": "/es/blog/que-es-la-transformacion-digital.html"
+    },
+    {
+      "source": "/es/blog/que-es-un-agente-de-ia",
+      "destination": "/es/blog/que-es-un-agente-de-ia.html"
+    },
+    {
+      "source": "/es/blog/que-es-un-erp-con-ia",
+      "destination": "/es/blog/que-es-un-erp-con-ia.html"
+    },
+    {
+      "source": "/es/blog/que-se-necesita-para-llegar-a-awwwards",
+      "destination": "/es/blog/que-se-necesita-para-llegar-a-awwwards.html"
+    },
+    {
+      "source": "/es/blog/que-son-los-servicios-de-seo",
+      "destination": "/es/blog/que-son-los-servicios-de-seo.html"
+    },
+    {
+      "source": "/es/blog/react-native-vs-flutter-cual-elegir",
+      "destination": "/es/blog/react-native-vs-flutter-cual-elegir.html"
+    },
+    {
+      "source": "/es/blog/reducir-costo-por-adquisicion",
+      "destination": "/es/blog/reducir-costo-por-adquisicion.html"
+    },
+    {
+      "source": "/es/blog/retos-de-la-migracion-a-la-nube",
+      "destination": "/es/blog/retos-de-la-migracion-a-la-nube.html"
+    },
+    {
+      "source": "/es/blog/s/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/s/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/s/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/blog/s/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/blog/salesforce-vs-hubspot-vs-zoho-cual-crm",
+      "destination": "/es/blog/salesforce-vs-hubspot-vs-zoho-cual-crm.html"
+    },
+    {
+      "source": "/es/blog/seo-empresarial",
+      "destination": "/es/blog/seo-empresarial.html"
+    },
+    {
+      "source": "/es/blog/seo-para-ecommerce",
+      "destination": "/es/blog/seo-para-ecommerce.html"
+    },
+    {
+      "source": "/es/blog/seo-vs-ppc-en-cual-invertir",
+      "destination": "/es/blog/seo-vs-ppc-en-cual-invertir.html"
+    },
+    {
+      "source": "/es/blog/sigue-importando-el-seo-busqueda-con-ia",
+      "destination": "/es/blog/sigue-importando-el-seo-busqueda-con-ia.html"
+    },
+    {
+      "source": "/es/blog/sitio-web-a-la-medida-vs-plantilla",
+      "destination": "/es/blog/sitio-web-a-la-medida-vs-plantilla.html"
+    },
+    {
+      "source": "/es/blog/software-a-la-medida-vs-software-empaquetado",
+      "destination": "/es/blog/software-a-la-medida-vs-software-empaquetado.html"
+    },
+    {
+      "source": "/es/blog/software-medico-a-la-medida",
+      "destination": "/es/blog/software-medico-a-la-medida.html"
+    },
+    {
+      "source": "/es/blog/tarifas-desarrollo-de-software-nearshore",
+      "destination": "/es/blog/tarifas-desarrollo-de-software-nearshore.html"
+    },
+    {
+      "source": "/es/blog/tendencias-de-transformacion-digital-2026",
+      "destination": "/es/blog/tendencias-de-transformacion-digital-2026.html"
+    },
+    {
+      "source": "/es/blog/transformacion-digital-en-el-sector-salud",
+      "destination": "/es/blog/transformacion-digital-en-el-sector-salud.html"
+    },
+    {
+      "source": "/es/blog/web-app-vs-sitio-web",
+      "destination": "/es/blog/web-app-vs-sitio-web.html"
+    },
+    {
+      "source": "/es/case-studies",
+      "destination": "/es/case-studies.html"
+    },
+    {
+      "source": "/es/case-studies/industries/education",
+      "destination": "/es/case-studies/industries/education.html"
+    },
+    {
+      "source": "/es/case-studies/industries/gaming-and-betting",
+      "destination": "/es/case-studies/industries/gaming-and-betting.html"
+    },
+    {
+      "source": "/es/case-studies/industries/healthcare",
+      "destination": "/es/case-studies/industries/healthcare.html"
+    },
+    {
+      "source": "/es/case-studies/industries/hospitality-and-real-estate",
+      "destination": "/es/case-studies/industries/hospitality-and-real-estate.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics",
+      "destination": "/es/case-studies/industries/logistics.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics/automatizacion-evidencia-entregas-google-workspace",
+      "destination": "/es/case-studies/industries/logistics/automatizacion-evidencia-entregas-google-workspace.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics/tic/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/logistics/tic/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/logistics/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/manufacturing",
+      "destination": "/es/case-studies/industries/manufacturing.html"
+    },
+    {
+      "source": "/es/case-studies/industries/media-and-publishing",
+      "destination": "/es/case-studies/industries/media-and-publishing.html"
+    },
+    {
+      "source": "/es/case-studies/industries/music-and-entertainment",
+      "destination": "/es/case-studies/industries/music-and-entertainment.html"
+    },
+    {
+      "source": "/es/case-studies/industries/non-profits",
+      "destination": "/es/case-studies/industries/non-profits.html"
+    },
+    {
+      "source": "/es/case-studies/industries/retail-and-ecommerce",
+      "destination": "/es/case-studies/industries/retail-and-ecommerce.html"
+    },
+    {
+      "source": "/es/case-studies/industries/retail-and-ecommerce/seo-tecnico-catalogo-hardware-b2b-laravel",
+      "destination": "/es/case-studies/industries/retail-and-ecommerce/seo-tecnico-catalogo-hardware-b2b-laravel.html"
+    },
+    {
+      "source": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/case-studies/industries/retail-and-ecommerce/tic/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/case-studies/industries/technology-and-saas",
+      "destination": "/es/case-studies/industries/technology-and-saas.html"
+    },
+    {
+      "source": "/es/contact",
+      "destination": "/es/contact.html"
+    },
+    {
+      "source": "/es/index",
+      "destination": "/es/index.html"
+    },
+    {
+      "source": "/es/method",
+      "destination": "/es/method.html"
+    },
+    {
+      "source": "/es/privacy",
+      "destination": "/es/privacy.html"
+    },
+    {
+      "source": "/es/reviews",
+      "destination": "/es/reviews.html"
+    },
+    {
+      "source": "/es/seo-check",
+      "destination": "/es/seo-check.html"
+    },
+    {
+      "source": "/es/services",
+      "destination": "/es/services.html"
+    },
+    {
+      "source": "/es/services/_-9fa5",
+      "destination": "/es/services/_-9fa5.html"
+    },
+    {
+      "source": "/es/services/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/ai-agent-development",
+      "destination": "/es/services/ai-agent-development.html"
+    },
+    {
+      "source": "/es/services/ai-automation",
+      "destination": "/es/services/ai-automation.html"
+    },
+    {
+      "source": "/es/services/cloud-migration",
+      "destination": "/es/services/cloud-migration.html"
+    },
+    {
+      "source": "/es/services/crm-implementation",
+      "destination": "/es/services/crm-implementation.html"
+    },
+    {
+      "source": "/es/services/custom-software-development",
+      "destination": "/es/services/custom-software-development.html"
+    },
+    {
+      "source": "/es/services/data-analytics",
+      "destination": "/es/services/data-analytics.html"
+    },
+    {
+      "source": "/es/services/digital-transformation",
+      "destination": "/es/services/digital-transformation.html"
+    },
+    {
+      "source": "/es/services/erp-implementation",
+      "destination": "/es/services/erp-implementation.html"
+    },
+    {
+      "source": "/es/services/generative-engine-optimization",
+      "destination": "/es/services/generative-engine-optimization.html"
+    },
+    {
+      "source": "/es/services/industrial-iot",
+      "destination": "/es/services/industrial-iot.html"
+    },
+    {
+      "source": "/es/services/ks/0sx2c9_7lw-_-9fa5",
+      "destination": "/es/services/ks/0sx2c9_7lw-_-9fa5.html"
+    },
+    {
+      "source": "/es/services/ks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/ks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/ks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/ks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/services/ks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/services/legacy-system-modernization",
+      "destination": "/es/services/legacy-system-modernization.html"
+    },
+    {
+      "source": "/es/services/mobile-app-development",
+      "destination": "/es/services/mobile-app-development.html"
+    },
+    {
+      "source": "/es/services/nearshore-software-development",
+      "destination": "/es/services/nearshore-software-development.html"
+    },
+    {
+      "source": "/es/services/paid-media",
+      "destination": "/es/services/paid-media.html"
+    },
+    {
+      "source": "/es/services/seo",
+      "destination": "/es/services/seo.html"
+    },
+    {
+      "source": "/es/services/web-development",
+      "destination": "/es/services/web-development.html"
+    },
+    {
+      "source": "/es/sitemap",
+      "destination": "/es/sitemap.html"
+    },
+    {
+      "source": "/es/terms",
+      "destination": "/es/terms.html"
+    },
+    {
+      "source": "/es/xt/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/xt/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/xt/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/xt/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/free-seo-check",
+      "destination": "/free-seo-check.html"
+    },
+    {
+      "source": "/method",
+      "destination": "/method.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/reviews",
+      "destination": "/reviews.html"
+    },
+    {
+      "source": "/seo-check",
+      "destination": "/seo-check.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/services.html"
+    },
+    {
+      "source": "/services/_-9fa5",
+      "destination": "/services/_-9fa5.html"
+    },
+    {
+      "source": "/services/ai-agent-development",
+      "destination": "/services/ai-agent-development.html"
+    },
+    {
+      "source": "/services/ai-automation",
+      "destination": "/services/ai-automation.html"
+    },
+    {
+      "source": "/services/cloud-migration",
+      "destination": "/services/cloud-migration.html"
+    },
+    {
+      "source": "/services/crm-implementation",
+      "destination": "/services/crm-implementation.html"
+    },
+    {
+      "source": "/services/custom-software-development",
+      "destination": "/services/custom-software-development.html"
+    },
+    {
+      "source": "/services/data-analytics",
+      "destination": "/services/data-analytics.html"
+    },
+    {
+      "source": "/services/digital-transformation",
+      "destination": "/services/digital-transformation.html"
+    },
+    {
+      "source": "/services/erp-implementation",
+      "destination": "/services/erp-implementation.html"
+    },
+    {
+      "source": "/services/generative-engine-optimization",
+      "destination": "/services/generative-engine-optimization.html"
+    },
+    {
+      "source": "/services/industrial-iot",
+      "destination": "/services/industrial-iot.html"
+    },
+    {
+      "source": "/services/ks/0sx2c9_7lw-_-9fa5",
+      "destination": "/services/ks/0sx2c9_7lw-_-9fa5.html"
+    },
+    {
+      "source": "/services/legacy-system-modernization",
+      "destination": "/services/legacy-system-modernization.html"
+    },
+    {
+      "source": "/services/mobile-app-development",
+      "destination": "/services/mobile-app-development.html"
+    },
+    {
+      "source": "/services/nearshore-software-development",
+      "destination": "/services/nearshore-software-development.html"
+    },
+    {
+      "source": "/services/paid-media",
+      "destination": "/services/paid-media.html"
+    },
+    {
+      "source": "/services/seo",
+      "destination": "/services/seo.html"
+    },
+    {
+      "source": "/services/web-development",
+      "destination": "/services/web-development.html"
+    },
+    {
+      "source": "/sitemap",
+      "destination": "/sitemap.html"
+    },
+    {
+      "source": "/static/chunks/06_5dp58lyix39fa5",
+      "destination": "/static/chunks/06_5dp58lyix39fa5.html"
+    },
+    {
+      "source": "/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/static/chunks/11zd_ofpxdf0k9fa5.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/xt/static/chunks/11zd_ofpxdf0k9fa5",
+      "destination": "/xt/static/chunks/11zd_ofpxdf0k9fa5.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/static-router-fix.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
 }
