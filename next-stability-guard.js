@@ -170,16 +170,20 @@
 })();
 
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V2 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V3 */
 (() => {
-  const load = src => {
-    if (document.querySelector(`script[data-mirror-v2="${src}"]`)) return;
-    const s=document.createElement('script'); s.src=src; s.defer=true; s.dataset.mirrorV2=src;
+  const load = (src, key) => {
+    if (document.querySelector(`script[data-mirror-v3="${key}"]`)) return;
+    const s=document.createElement('script');
+    s.src=src;
+    s.defer=true;
+    s.dataset.mirrorV3=key;
     (document.head||document.documentElement).appendChild(s);
   };
-  load('/mirror-ui-fixes.js');
+  load('/mirror-ui-fixes.js?v=3','assets');
   if(location.pathname==='/'||location.pathname==='/index.html'){
-    load('/globe-fallback.js');
-    load('/footer-particle-fallback.js');
+    load('/globe-fallback.js?v=3','globe');
+    load('/method-scroll-fallback.js?v=3','method');
+    load('/footer-particle-fallback.js?v=3','particles');
   }
 })();
