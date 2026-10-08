@@ -1,189 +1,154 @@
 (() => {
   'use strict';
 
-  const sameOriginUrl = (value) => {
-    try { return new URL(value, location.href); } catch { return null; }
-  };
+  const sameOriginUrl=(value)=>{try{return new URL(value,location.href)}catch{return null}};
 
-  // Static-mirror polish shared by every page.
-  // Review avatars were rendered through Next Image Optimizer on the live app.
-  // In a static deployment /_next/image does not exist, so unwrap the original
-  // Google profile URL and load it directly.
-  const polishStaticDom = (root = document) => {
-    const scope = root && root.querySelectorAll ? root : document;
-
-    scope.querySelectorAll('img[src^="/_next/image?url="]').forEach((img) => {
-      try {
-        const optimized = new URL(img.getAttribute('src'), location.origin);
-        const direct = optimized.searchParams.get('url');
-        if (!direct) return;
-        const source = new URL(direct);
-        if (!/(^|\.)googleusercontent\.com$/i.test(source.hostname)) return;
-
+  const polishStaticDom=(root=document)=>{
+    const scope=root&&root.querySelectorAll?root:document;
+    scope.querySelectorAll('img[src^="/_next/image?url="]').forEach(img=>{
+      try{
+        const optimized=new URL(img.getAttribute('src'),location.origin);
+        const direct=optimized.searchParams.get('url');
+        if(!direct)return;
+        const source=new URL(direct);
+        if(!/(^|\.)googleusercontent\.com$/i.test(source.hostname))return;
         img.removeAttribute('srcset');
         img.removeAttribute('sizes');
-        img.referrerPolicy = 'no-referrer';
-        img.src = source.href;
-      } catch {}
+        img.referrerPolicy='no-referrer';
+        img.src=source.href;
+      }catch{}
     });
-
-    // Remove the fixed Awwwards/Honorable Mention badge globally.
-    scope.querySelectorAll('a[href*="awwwards.com/sites/weevolveit"]').forEach((node) => node.remove());
+    scope.querySelectorAll('a[href*="awwwards.com/sites/weevolveit"]').forEach(node=>node.remove());
   };
 
-  const startStaticPolish = () => {
+  const startStaticPolish=()=>{
     polishStaticDom(document);
-    if (!document.documentElement) return;
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node && node.nodeType === 1) polishStaticDom(node);
+    if(!document.documentElement)return;
+    const observer=new MutationObserver(mutations=>{
+      for(const mutation of mutations){
+        for(const node of mutation.addedNodes){
+          if(node&&node.nodeType===1)polishStaticDom(node);
         }
       }
     });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+    observer.observe(document.documentElement,{childList:true,subtree:true});
   };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startStaticPolish,{once:true});
+  else startStaticPolish();
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startStaticPolish, { once: true });
-  } else {
-    startStaticPolish();
-  }
-
-  // Stop Next's client router from taking over links in this static mirror.
-  document.addEventListener('click', (event) => {
-    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-    const a = event.target && event.target.closest ? event.target.closest('a[href]') : null;
-    if (!a || a.hasAttribute('download') || (a.target && a.target !== '_self')) return;
-    const href = a.getAttribute('href');
-    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
-    const url = sameOriginUrl(a.href);
-    if (!url || url.origin !== location.origin) return;
-    if (url.pathname === location.pathname && url.search === location.search && url.hash) return;
+  // Static mirror: use document navigation instead of the App Router.
+  document.addEventListener('click',event=>{
+    if(event.defaultPrevented||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0)return;
+    const a=event.target&&event.target.closest?event.target.closest('a[href]'):null;
+    if(!a||a.hasAttribute('download')||(a.target&&a.target!=='_self'))return;
+    const href=a.getAttribute('href');
+    if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')||href.startsWith('javascript:'))return;
+    const url=sameOriginUrl(a.href);
+    if(!url||url.origin!==location.origin)return;
+    if(url.pathname===location.pathname&&url.search===location.search&&url.hash)return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    location.href = url.pathname + url.search + url.hash;
-  }, true);
+    location.href=url.pathname+url.search+url.hash;
+  },true);
 
-  // Prevent App Router history transitions. Real page navigation is safer for the static copy.
-  for (const name of ['pushState', 'replaceState']) {
-    const original = history[name].bind(history);
-    history[name] = function(state, title, url) {
-      if (url != null) {
-        const next = sameOriginUrl(url);
-        if (next && next.origin === location.origin && next.pathname !== location.pathname) {
-          location.href = next.pathname + next.search + next.hash;
+  for(const name of ['pushState','replaceState']){
+    const original=history[name].bind(history);
+    history[name]=function(state,title,url){
+      if(url!=null){
+        const next=sameOriginUrl(url);
+        if(next&&next.origin===location.origin&&next.pathname!==location.pathname){
+          location.href=next.pathname+next.search+next.hash;
           return;
         }
       }
-      return original(state, title, url);
+      return original(state,title,url);
     };
   }
 
-  // Next prefetch/RSC requests are not useful in a static mirror and can put the router
-  // in an invalid state when no server component endpoint exists.
-  const nativeFetch = window.fetch ? window.fetch.bind(window) : null;
-  if (nativeFetch) {
-    window.fetch = function(input, init) {
+  // RSC/prefetch endpoints do not exist in the static copy.
+  const nativeFetch=window.fetch?window.fetch.bind(window):null;
+  if(nativeFetch){
+    window.fetch=function(input,init){
       let url;
-      try { url = new URL(typeof input === 'string' ? input : input.url, location.href); } catch { return nativeFetch(input, init); }
-      let isRsc = url.searchParams.has('_rsc');
-      try {
-        const headers = new Headers(init && init.headers ? init.headers : (typeof input !== 'string' && input.headers ? input.headers : undefined));
-        if (headers.get('RSC') === '1' || headers.has('Next-Router-State-Tree')) isRsc = true;
-      } catch {}
-      if (isRsc && url.origin === location.origin && url.pathname !== location.pathname) {
-        return new Promise(() => {});
-      }
-      return nativeFetch(input, init);
+      try{url=new URL(typeof input==='string'?input:input.url,location.href)}catch{return nativeFetch(input,init)}
+      let isRsc=url.searchParams.has('_rsc');
+      try{
+        const headers=new Headers(init&&init.headers?init.headers:(typeof input!=='string'&&input.headers?input.headers:undefined));
+        if(headers.get('RSC')==='1'||headers.has('Next-Router-State-Tree'))isRsc=true;
+      }catch{}
+      if(isRsc&&url.origin===location.origin&&url.pathname!==location.pathname)return new Promise(()=>{});
+      return nativeFetch(input,init);
     };
   }
 
-  // If a lazy Turbopack chunk is absent from this mirror, load the corresponding public
-  // chunk from the still-live original as a last-resort compatibility fallback instead
-  // of letting React collapse into its global error screen.
-  const scriptSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
-  if (scriptSrc && scriptSrc.set && scriptSrc.get) {
-    Object.defineProperty(HTMLScriptElement.prototype, 'src', {
-      configurable: true,
-      enumerable: scriptSrc.enumerable,
-      get: scriptSrc.get,
-      set(value) {
-        let next = value;
-        try {
-          const u = new URL(value, location.href);
-          if (u.origin === location.origin && u.pathname.startsWith('/_next/static/chunks/') && !this.hasAttribute('data-static-initial')) {
-            next = 'https://weevolveit.com' + u.pathname + u.search;
-          }
-        } catch {}
-        return scriptSrc.set.call(this, next);
+  // Missing lazy Next chunks can still be requested from the live public origin.
+  const scriptSrc=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,'src');
+  if(scriptSrc&&scriptSrc.set&&scriptSrc.get){
+    Object.defineProperty(HTMLScriptElement.prototype,'src',{
+      configurable:true,enumerable:scriptSrc.enumerable,get:scriptSrc.get,
+      set(value){
+        let next=value;
+        try{
+          const u=new URL(value,location.href);
+          if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&!this.hasAttribute('data-static-initial'))next='https://weevolveit.com'+u.pathname+u.search;
+        }catch{}
+        return scriptSrc.set.call(this,next);
       }
     });
   }
 
-  const linkHref = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href');
-  if (linkHref && linkHref.set && linkHref.get) {
-    Object.defineProperty(HTMLLinkElement.prototype, 'href', {
-      configurable: true,
-      enumerable: linkHref.enumerable,
-      get: linkHref.get,
-      set(value) {
-        let next = value;
-        try {
-          const u = new URL(value, location.href);
-          if (u.origin === location.origin && u.pathname.startsWith('/_next/static/chunks/') && this.rel === 'stylesheet') {
-            next = 'https://weevolveit.com' + u.pathname + u.search;
-          }
-        } catch {}
-        return linkHref.set.call(this, next);
+  const linkHref=Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype,'href');
+  if(linkHref&&linkHref.set&&linkHref.get){
+    Object.defineProperty(HTMLLinkElement.prototype,'href',{
+      configurable:true,enumerable:linkHref.enumerable,get:linkHref.get,
+      set(value){
+        let next=value;
+        try{
+          const u=new URL(value,location.href);
+          if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&this.rel==='stylesheet')next='https://weevolveit.com'+u.pathname+u.search;
+        }catch{}
+        return linkHref.set.call(this,next);
       }
     });
   }
 
-  // Safety net: if the Next global error boundary still replaces the page, perform one
-  // clean document reload instead of leaving the visitor on the dead-end error screen.
-  let recovered = false;
-  const recover = () => {
-    if (recovered) return;
-    const text = (document.body && document.body.innerText || '').toLowerCase();
-    if (!text.includes("this page couldn't load") && !text.includes('this page could not load')) return;
-    recovered = true;
-    const key = 'wee-static-recover:' + location.pathname + location.search;
-    try {
-      if (sessionStorage.getItem(key) === '1') {
-        history.back();
-        return;
-      }
-      sessionStorage.setItem(key, '1');
-    } catch {}
+  let recovered=false;
+  const recover=()=>{
+    if(recovered)return;
+    const text=(document.body&&document.body.innerText||'').toLowerCase();
+    if(!text.includes("this page couldn't load")&&!text.includes('this page could not load'))return;
+    recovered=true;
+    const key='wee-static-recover:'+location.pathname+location.search;
+    try{
+      if(sessionStorage.getItem(key)==='1'){history.back();return}
+      sessionStorage.setItem(key,'1');
+    }catch{}
     location.reload();
   };
-
-  const observe = () => {
-    if (!document.documentElement) return;
-    const mo = new MutationObserver(recover);
-    mo.observe(document.documentElement, { childList: true, subtree: true });
+  const observe=()=>{
+    if(!document.documentElement)return;
+    const mo=new MutationObserver(recover);
+    mo.observe(document.documentElement,{childList:true,subtree:true});
     recover();
   };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observe, { once: true });
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observe,{once:true});
   else observe();
 })();
 
-
-/* MIRROR_CRITICAL_VISUAL_FIXES_V3 */
-(() => {
-  const load = (src, key) => {
-    if (document.querySelector(`script[data-mirror-v3="${key}"]`)) return;
+/* MIRROR_CRITICAL_VISUAL_FIXES_V4 */
+(()=>{
+  const load=(src,key)=>{
+    if(document.querySelector(`script[data-mirror-v4="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV3=key;
+    s.dataset.mirrorV4=key;
     (document.head||document.documentElement).appendChild(s);
   };
-  load('/mirror-ui-fixes.js?v=3','assets');
+  load('/mirror-ui-fixes.js?v=4','assets');
   if(location.pathname==='/'||location.pathname==='/index.html'){
-    load('/globe-fallback.js?v=3','globe');
-    load('/method-scroll-fallback.js?v=3','method');
-    load('/footer-particle-fallback.js?v=3','particles');
+    load('/globe-fallback.js?v=4','globe');
+    load('/method-scroll-fallback.js?v=4','method');
+    load('/footer-particle-fallback.js?v=4','particles');
   }
 })();
