@@ -1,8 +1,11 @@
 (() => {
   'use strict';
 
-  if (window.__WE_CUSTOM_GLOBE__) return;
-  window.__WE_CUSTOM_GLOBE__ = true;
+  if (window.__WE_GLOBE_V3__) return;
+  window.__WE_GLOBE_V3__ = true;
+
+  const old = document.getElementById('we-custom-globe');
+  if (old) old.remove();
 
   const CONTINENTS = [
     [[-168,72],[-150,70],[-135,58],[-125,50],[-124,40],[-117,32],[-106,24],[-97,19],[-88,20],[-82,25],[-80,31],[-75,39],[-66,45],[-60,52],[-63,60],[-78,68],[-95,73],[-115,75],[-140,72]],
@@ -17,306 +20,227 @@
     [[96,6],[105,0],[118,-8],[126,-7],[119,4],[108,8],[96,6]]
   ];
 
+  const deg = v => v * Math.PI / 180;
+  const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
+
   function pointInPoly(lon, lat, poly) {
     let inside = false;
-    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-      const xi = poly[i][0], yi = poly[i][1];
-      const xj = poly[j][0], yj = poly[j][1];
-      const hit = ((yi > lat) !== (yj > lat)) &&
-        (lon < (xj - xi) * (lat - yi) / ((yj - yi) || 1e-6) + xi);
-      if (hit) inside = !inside;
+    for (let i=0, j=poly.length-1; i<poly.length; j=i++) {
+      const xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1];
+      const hit=((yi>lat)!==(yj>lat)) && (lon < (xj-xi)*(lat-yi)/((yj-yi)||1e-6)+xi);
+      if (hit) inside=!inside;
     }
     return inside;
   }
+  const isLand = (lon,lat) => CONTINENTS.some(p => pointInPoly(lon,lat,p));
 
-  function isLand(lon, lat) {
-    for (const p of CONTINENTS) if (pointInPoly(lon, lat, p)) return true;
-    return false;
-  }
-
-  let visitor = { lat: -23.5505, lng: -46.6333, city: 'São Paulo' };
-  fetch('https://ipapi.co/json/').then(r => r.ok ? r.json() : null).then(d => {
-    if (!d) return; const lat=Number(d.latitude), lng=Number(d.longitude);
-    if (Number.isFinite(lat) && Number.isFinite(lng)) visitor={lat,lng,city:String(d.city||d.region||'ONLINE').trim()||'ONLINE'};
-  }).catch(()=>{});
-
-  function deg(v) { return v * Math.PI / 180; }
-  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-
-  const landDots = [];
-  for (let lat = -70; lat <= 78; lat += 2.15) {
-    const lonStep = 2.05 / Math.max(0.42, Math.cos(deg(lat)));
-    for (let lon = -180; lon < 180; lon += lonStep) {
-      const jitter = Math.sin((lon + lat) * 1.73) * 0.35;
-      const jl = lon + jitter;
-      const jt = lat + Math.cos((lon - lat) * 1.17) * 0.22;
-      if (isLand(jl, jt)) landDots.push([jl, jt]);
+  const landDots=[];
+  for (let lat=-72; lat<=80; lat+=1.55) {
+    const step=1.5/Math.max(.38,Math.cos(deg(lat)));
+    for (let lon=-180; lon<180; lon+=step) {
+      const jl=lon+Math.sin((lon+lat)*1.73)*.24;
+      const jt=lat+Math.cos((lon-lat)*1.17)*.16;
+      if (isLand(jl,jt)) landDots.push([jl,jt]);
     }
   }
 
-  const stars = Array.from({ length: 115 }, (_, i) => ({
-    x: ((i * 73) % 997) / 997,
-    y: ((i * 193) % 991) / 991,
-    a: 0.12 + ((i * 17) % 31) / 100,
-    r: 0.45 + ((i * 11) % 8) / 10
+  const stars=Array.from({length:150},(_,i)=>({
+    x:((i*73)%997)/997,
+    y:((i*193)%991)/991,
+    a:.08+((i*17)%31)/115,
+    r:.35+((i*11)%8)/12
   }));
 
-  function init() {
-    const hero = document.querySelector('[data-hero-section="true"]');
-    if (!hero) {
-      setTimeout(init, 250);
-      return;
-    }
-    if (document.getElementById('we-custom-globe')) return;
+  let visitor={lat:-23.5505,lng:-46.6333,city:'São Paulo'};
+  fetch('https://ipapi.co/json/').then(r=>r.ok?r.json():null).then(d=>{
+    if (!d) return;
+    const lat=Number(d.latitude), lng=Number(d.longitude);
+    if (Number.isFinite(lat)&&Number.isFinite(lng)) visitor={lat,lng,city:String(d.city||d.region||'ONLINE').trim()||'ONLINE'};
+  }).catch(()=>{});
 
-    const canvas = document.createElement('canvas');
-    canvas.id = 'we-custom-globe';
-    canvas.setAttribute('aria-hidden', 'true');
-    Object.assign(canvas.style, {
-      position: 'absolute',
-      inset: '0 0 auto 0',
-      width: '100%',
-      height: '100svh',
-      minHeight: '620px',
-      maxHeight: '900px',
-      zIndex: '1',
-      pointerEvents: 'none',
-      opacity: '0',
-      transition: 'opacity 900ms ease',
-      mixBlendMode: 'normal'
+  function boot() {
+    const hero=document.querySelector('[data-hero-section="true"]');
+    if (!hero || !document.body) return setTimeout(boot,120);
+    if (document.getElementById('we-globe-layer-v3')) return;
+
+    const layer=document.createElement('div');
+    layer.id='we-globe-layer-v3';
+    layer.setAttribute('aria-hidden','true');
+    Object.assign(layer.style,{
+      position:'absolute',left:'0',width:'100%',height:'100svh',minHeight:'620px',maxHeight:'940px',
+      zIndex:'9',pointerEvents:'none',overflow:'hidden',opacity:'1'
     });
-    hero.prepend(canvas);
 
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const canvas=document.createElement('canvas');
+    canvas.id='we-custom-globe-v3';
+    Object.assign(canvas.style,{
+      position:'absolute',inset:'0',width:'100%',height:'100%',pointerEvents:'auto',touchAction:'pan-y',
+      opacity:'0',transition:'opacity 650ms ease',cursor:'default'
+    });
+    layer.appendChild(canvas);
+    document.body.appendChild(layer);
+
+    const ctx=canvas.getContext('2d',{alpha:true});
     if (!ctx) return;
 
-    let cssW = 0, cssH = 0, dpr = 1;
-    let mouseX = 0, mouseY = 0, targetMouseX = 0, targetMouseY = 0;
-    let raf = 0;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let W=0,H=0,D=1,cx=0,cy=0,radius=0;
+    let dragRot=0, dragTilt=0, velRot=0, velTilt=0;
+    let dragging=false,lastX=0,lastY=0,lastT=0;
+    let baseTop=0, raf=0;
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function syncLayer() {
+      const current=document.querySelector('[data-hero-section="true"]');
+      if (!current) return;
+      const rect=current.getBoundingClientRect();
+      baseTop=Math.max(0,rect.top+scrollY);
+      layer.style.top=baseTop+'px';
+      const hh=clamp(innerHeight||800,620,940);
+      layer.style.height=hh+'px';
+      if (layer.parentNode!==document.body) document.body.appendChild(layer);
+    }
 
     function resize() {
-      cssW = Math.max(320, hero.clientWidth || innerWidth);
-      cssH = clamp(innerHeight || 800, 620, 900);
-      dpr = Math.min(2, devicePixelRatio || 1);
-      canvas.width = Math.round(cssW * dpr);
-      canvas.height = Math.round(cssH * dpr);
-      canvas.style.height = cssH + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      syncLayer();
+      W=Math.max(320,innerWidth||document.documentElement.clientWidth||1200);
+      H=clamp(innerHeight||800,620,940);
+      D=Math.min(2,devicePixelRatio||1);
+      canvas.width=Math.round(W*D); canvas.height=Math.round(H*D);
+      ctx.setTransform(D,0,0,D,0,0);
+      const mobile=W<760;
+      radius=mobile?Math.min(W*.43,190):Math.min(W*.205,H*.31,285);
+      cx=W*.5;
+      cy=mobile?Math.min(H*.39,300):H*.47;
     }
 
-    function project(lon, lat, rotY, tilt, cx, cy, r) {
-      const la = deg(lat);
-      const lo = deg(lon) + rotY;
-      const x0 = Math.cos(la) * Math.sin(lo);
-      const z0 = Math.cos(la) * Math.cos(lo);
-      const y0 = -Math.sin(la);
-      const ct = Math.cos(tilt), st = Math.sin(tilt);
-      const y = y0 * ct - z0 * st;
-      const z = y0 * st + z0 * ct;
-      return { x: cx + x0 * r, y: cy + y * r, z };
+    function project(lon,lat,rotY,tilt) {
+      const la=deg(lat), lo=deg(lon)+rotY;
+      const x0=Math.cos(la)*Math.sin(lo);
+      const z0=Math.cos(la)*Math.cos(lo);
+      const y0=-Math.sin(la);
+      const ct=Math.cos(tilt), st=Math.sin(tilt);
+      const y=y0*ct-z0*st, z=y0*st+z0*ct;
+      return {x:cx+x0*radius,y:cy+y*radius,z};
     }
 
-    function drawGrid(rotY, tilt, cx, cy, r) {
+    function orbit(rx,ry,angle,alpha,offset=0) {
       ctx.save();
-      ctx.lineWidth = 0.55;
-      for (let lat = -60; lat <= 60; lat += 20) {
-        ctx.beginPath();
-        let started = false;
-        for (let lon = -180; lon <= 180; lon += 3) {
-          const p = project(lon, lat, rotY, tilt, cx, cy, r);
-          if (p.z > -0.03) {
-            if (!started) { ctx.moveTo(p.x, p.y); started = true; }
-            else ctx.lineTo(p.x, p.y);
-          } else started = false;
-        }
-        ctx.strokeStyle = 'rgba(240,240,248,0.065)';
-        ctx.stroke();
-      }
-      for (let lon = -180; lon < 180; lon += 20) {
-        ctx.beginPath();
-        let started = false;
-        for (let lat = -88; lat <= 88; lat += 2) {
-          const p = project(lon, lat, rotY, tilt, cx, cy, r);
-          if (p.z > -0.03) {
-            if (!started) { ctx.moveTo(p.x, p.y); started = true; }
-            else ctx.lineTo(p.x, p.y);
-          } else started = false;
-        }
-        ctx.strokeStyle = 'rgba(240,240,248,0.055)';
-        ctx.stroke();
-      }
+      ctx.translate(cx,cy); ctx.rotate(angle);
+      ctx.beginPath(); ctx.ellipse(0,offset,rx,ry,0,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(240,240,248,${alpha})`; ctx.lineWidth=.65; ctx.stroke();
       ctx.restore();
     }
 
-    function drawRoute(rotY, tilt, cx, cy, r) {
-      const a = { lon: visitor.lng, lat: visitor.lat };
-      const b = { lon: -100.3161, lat: 25.6866 };
-      const pa = project(a.lon, a.lat, rotY, tilt, cx, cy, r);
-      const pb = project(b.lon, b.lat, rotY, tilt, cx, cy, r);
-      if (pa.z < -0.18 && pb.z < -0.18) return;
-
-      const mx = (pa.x + pb.x) / 2;
-      const my = (pa.y + pb.y) / 2 - r * 0.16;
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(pa.x, pa.y);
-      ctx.quadraticCurveTo(mx, my, pb.x, pb.y);
-      const g = ctx.createLinearGradient(pa.x, pa.y, pb.x, pb.y);
-      g.addColorStop(0, 'rgba(228,0,124,0.15)');
-      g.addColorStop(0.55, 'rgba(228,0,124,0.82)');
-      g.addColorStop(1, 'rgba(240,240,248,0.35)');
-      ctx.strokeStyle = g;
-      ctx.lineWidth = 1.1;
-      ctx.stroke();
-
-      for (const p of [pa, pb]) {
-        if (p.z > -0.18) {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 3.2, 0, Math.PI * 2);
-          ctx.fillStyle = '#e4007c';
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = '#e4007c';
-          ctx.fill();
+    function drawGrid(rot,tilt) {
+      ctx.save(); ctx.lineWidth=.5;
+      for (let lat=-60;lat<=60;lat+=20) {
+        ctx.beginPath(); let started=false;
+        for (let lon=-180;lon<=180;lon+=3) {
+          const p=project(lon,lat,rot,tilt);
+          if (p.z>-0.02) { if(!started){ctx.moveTo(p.x,p.y);started=true}else ctx.lineTo(p.x,p.y); }
+          else started=false;
         }
+        ctx.strokeStyle='rgba(240,240,248,.052)'; ctx.stroke();
+      }
+      for (let lon=-180;lon<180;lon+=20) {
+        ctx.beginPath(); let started=false;
+        for (let lat=-88;lat<=88;lat+=2) {
+          const p=project(lon,lat,rot,tilt);
+          if (p.z>-0.02) { if(!started){ctx.moveTo(p.x,p.y);started=true}else ctx.lineTo(p.x,p.y); }
+          else started=false;
+        }
+        ctx.strokeStyle='rgba(240,240,248,.045)'; ctx.stroke();
       }
       ctx.restore();
-
-      if (pa.z > -0.05) drawLabel(pa.x, pa.y, 'ONLINE · ' + String(visitor.city || 'ONLINE').toUpperCase());
     }
 
-    function drawLabel(x, y, text) {
+    function label(x,y,text) {
       ctx.save();
-      ctx.font = cssW < 760 ? '9px ui-monospace, SFMono-Regular, Menlo, monospace' : '10px ui-monospace, SFMono-Regular, Menlo, monospace';
-      ctx.textBaseline = 'middle';
-      const tw = ctx.measureText(text).width;
-      const w = tw + 34;
-      const h = 24;
-      let lx = x + 14;
-      let ly = y - 34;
-      if (lx + w > cssW - 12) lx = x - w - 14;
-      const rr = 12;
-      ctx.beginPath();
-      ctx.roundRect(lx, ly, w, h, rr);
-      ctx.fillStyle = 'rgba(18,18,18,0.88)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(240,240,248,0.12)';
-      ctx.lineWidth = 0.75;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(lx + 12, ly + h / 2, 3, 0, Math.PI * 2);
-      ctx.fillStyle = '#e4007c';
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = '#e4007c';
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = 'rgba(240,240,248,0.62)';
-      ctx.fillText(text, lx + 21, ly + h / 2 + 0.5);
-      ctx.restore();
+      ctx.font=(W<760?'9px':'10px')+' ui-monospace,SFMono-Regular,Menlo,monospace';
+      ctx.textBaseline='middle';
+      const tw=ctx.measureText(text).width, bw=tw+34,bh=24;
+      let lx=x+14,ly=y-34;
+      if(lx+bw>W-14) lx=x-bw-14;
+      ctx.beginPath(); ctx.roundRect(lx,ly,bw,bh,12); ctx.fillStyle='rgba(18,18,18,.92)';ctx.fill();
+      ctx.strokeStyle='rgba(240,240,248,.16)';ctx.lineWidth=.75;ctx.stroke();
+      ctx.beginPath();ctx.arc(lx+12,ly+bh/2,3,0,Math.PI*2);ctx.fillStyle='#e4007c';ctx.shadowBlur=12;ctx.shadowColor='#e4007c';ctx.fill();
+      ctx.shadowBlur=0;ctx.fillStyle='rgba(240,240,248,.68)';ctx.fillText(text,lx+21,ly+bh/2+.5);ctx.restore();
     }
+
+    function drawRoute(rot,tilt) {
+      const a=project(visitor.lng,visitor.lat,rot,tilt);
+      const b=project(-100.3161,25.6866,rot,tilt);
+      if (a.z<-.18&&b.z<-.18) return;
+      ctx.save();ctx.beginPath();ctx.moveTo(a.x,a.y);
+      ctx.quadraticCurveTo((a.x+b.x)/2,(a.y+b.y)/2-radius*.22,b.x,b.y);
+      const g=ctx.createLinearGradient(a.x,a.y,b.x,b.y);g.addColorStop(0,'rgba(228,0,124,.18)');g.addColorStop(.55,'rgba(228,0,124,.82)');g.addColorStop(1,'rgba(240,240,248,.26)');
+      ctx.strokeStyle=g;ctx.lineWidth=1;ctx.stroke();
+      for(const p of [a,b]) if(p.z>-.18){ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fillStyle='#e4007c';ctx.shadowBlur=11;ctx.shadowColor='#e4007c';ctx.fill();ctx.shadowBlur=0;}
+      ctx.restore();
+      if(a.z>-.08) label(a.x,a.y,'ONLINE · '+String(visitor.city||'ONLINE').toUpperCase());
+    }
+
+    function insideGlobe(x,y) { return Math.hypot(x-cx,y-cy)<=radius*1.12; }
+    canvas.addEventListener('pointerdown',e=>{
+      const rect=canvas.getBoundingClientRect(), x=e.clientX-rect.left,y=e.clientY-rect.top;
+      if(!insideGlobe(x,y)) return;
+      dragging=true;lastX=e.clientX;lastY=e.clientY;lastT=performance.now();velRot=0;velTilt=0;
+      canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing';e.preventDefault();
+    });
+    canvas.addEventListener('pointermove',e=>{
+      const rect=canvas.getBoundingClientRect(), x=e.clientX-rect.left,y=e.clientY-rect.top;
+      if(!dragging){canvas.style.cursor=insideGlobe(x,y)?'grab':'default';return;}
+      const now=performance.now(),dt=Math.max(8,now-lastT),dx=e.clientX-lastX,dy=e.clientY-lastY;
+      const dr=dx/Math.max(140,radius)*1.05, dtilt=dy/Math.max(140,radius)*.72;
+      dragRot+=dr;dragTilt=clamp(dragTilt+dtilt,-.82,.82);velRot=dr*(16/dt);velTilt=dtilt*(16/dt);
+      lastX=e.clientX;lastY=e.clientY;lastT=now;e.preventDefault();
+    });
+    const release=e=>{
+      if(!dragging)return;dragging=false;canvas.style.cursor='grab';
+      try{canvas.releasePointerCapture(e.pointerId)}catch{}
+    };
+    canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);
 
     function frame(t) {
-      mouseX += (targetMouseX - mouseX) * 0.035;
-      mouseY += (targetMouseY - mouseY) * 0.035;
-      ctx.clearRect(0, 0, cssW, cssH);
+      if(!dragging){dragRot+=velRot;dragTilt=clamp(dragTilt+velTilt,-.82,.82);velRot*=.945;velTilt*=.92;}
+      const auto=reduced?0:t*.000018;
+      const rot=-deg(visitor.lng)+dragRot+auto;
+      const tilt=deg(-8)+dragTilt;
+      ctx.clearRect(0,0,W,H);
 
-      const mobile = cssW < 760;
-      const radius = mobile ? Math.min(cssW * 0.43, 185) : Math.min(cssW * 0.245, cssH * 0.34, 295);
-      const cx = cssW / 2 + mouseX * (mobile ? 4 : 12);
-      const cy = mobile ? Math.min(265, cssH * 0.35) : Math.min(338, cssH * 0.39) + mouseY * 6;
-      const rotation = -deg(visitor.lng) + (reduced ? 0 : Math.sin(t * 0.00018) * 0.05) + mouseX * 0.085;
-      const tilt = deg(-8 + mouseY * 2.5);
+      const glow=ctx.createRadialGradient(cx-radius*.22,cy-radius*.28,radius*.08,cx,cy,radius*1.2);
+      glow.addColorStop(0,'rgba(245,245,250,.06)');glow.addColorStop(.72,'rgba(80,80,90,.018)');glow.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,radius*1.22,0,Math.PI*2);ctx.fill();
 
-      const bg = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius * 1.35);
-      bg.addColorStop(0, 'rgba(255,255,255,0.028)');
-      bg.addColorStop(0.48, 'rgba(255,255,255,0.012)');
-      bg.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = bg;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.35, 0, Math.PI * 2);
-      ctx.fill();
+      orbit(radius*1.22,radius*.37,-.18,.11,-radius*.03);
+      orbit(radius*1.18,radius*.29,.42,.09,radius*.02);
+      orbit(radius*1.14,radius*.22,-.57,.075,0);
+      orbit(radius*1.08,radius*.48,.08,.055,0);
 
-      const sphere = ctx.createRadialGradient(cx - radius * 0.25, cy - radius * 0.33, radius * 0.04, cx, cy, radius);
-      sphere.addColorStop(0, 'rgba(245,245,250,0.055)');
-      sphere.addColorStop(0.5, 'rgba(70,70,80,0.025)');
-      sphere.addColorStop(1, 'rgba(0,0,0,0.03)');
-      ctx.fillStyle = sphere;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.clip();
-
-      for (const s of stars) {
-        const sx = s.x * cssW;
-        const sy = s.y * cssH;
-        if (Math.hypot(sx - cx, sy - cy) < radius * 1.08) continue;
-        ctx.beginPath();
-        ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(240,240,248,${s.a * 0.34})`;
-        ctx.fill();
-      }
-
-      drawGrid(rotation, tilt, cx, cy, radius);
-
-      const sizeBase = mobile ? 0.8 : 0.95;
-      for (const d of landDots) {
-        const p = project(d[0], d[1], rotation, tilt, cx, cy, radius);
-        if (p.z < -0.08) continue;
-        const depth = clamp((p.z + 0.08) / 1.08, 0, 1);
-        const edge = Math.sqrt(Math.max(0, 1 - ((p.x - cx) / radius) ** 2 - ((p.y - cy) / radius) ** 2));
-        const alpha = (0.12 + depth * 0.72) * clamp(edge * 1.8, 0.28, 1);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, sizeBase * (0.72 + depth * 0.65), 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(239,239,247,${alpha})`;
-        ctx.fill();
-      }
+      ctx.save();ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.clip();
+      for(const s of stars){const sx=s.x*W,sy=s.y*H;if(Math.hypot(sx-cx,sy-cy)<radius*.95){ctx.beginPath();ctx.arc(sx,sy,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(240,240,248,${s.a*.22})`;ctx.fill();}}
+      drawGrid(rot,tilt);
+      for(const d of landDots){const p=project(d[0],d[1],rot,tilt);if(p.z<-.07)continue;const depth=clamp((p.z+.07)/1.07,0,1);const edge=Math.sqrt(Math.max(0,1-((p.x-cx)/radius)**2-((p.y-cy)/radius)**2));const a=(.13+depth*.79)*clamp(edge*2,.25,1);ctx.beginPath();ctx.arc(p.x,p.y,.55+depth*.92,0,Math.PI*2);ctx.fillStyle=`rgba(240,240,248,${a})`;ctx.fill();}
       ctx.restore();
 
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius + 0.5, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(240,240,248,0.14)';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-      ctx.restore();
-
-      drawRoute(rotation, tilt, cx, cy, radius);
-
-      if (!reduced) raf = requestAnimationFrame(frame);
+      const rim=ctx.createRadialGradient(cx,cy,radius*.72,cx,cy,radius*1.03);rim.addColorStop(0,'rgba(240,240,248,0)');rim.addColorStop(.92,'rgba(240,240,248,.025)');rim.addColorStop(1,'rgba(240,240,248,.24)');ctx.fillStyle=rim;ctx.beginPath();ctx.arc(cx,cy,radius*1.03,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(cx,cy,radius+.5,0,Math.PI*2);ctx.strokeStyle='rgba(240,240,248,.17)';ctx.lineWidth=.75;ctx.stroke();
+      drawRoute(rot,tilt);
+      raf=requestAnimationFrame(frame);
     }
 
-    function onPointer(e) {
-      targetMouseX = clamp((e.clientX / innerWidth - 0.5) * 2, -1, 1);
-      targetMouseY = clamp((e.clientY / innerHeight - 0.5) * 2, -1, 1);
-    }
+    addEventListener('resize',resize,{passive:true});
+    resize();requestAnimationFrame(()=>canvas.style.opacity='1');raf=requestAnimationFrame(frame);
 
-    addEventListener('resize', resize, { passive: true });
-    addEventListener('pointermove', onPointer, { passive: true });
-    resize();
-    requestAnimationFrame(() => { canvas.style.opacity = '1'; });
-    frame(performance.now());
-
-    if (reduced) {
-      cancelAnimationFrame(raf);
-      frame(0);
-    }
-
-    // Mirror safety: if Next hydration never completes, keep the captured page visible.
-    setTimeout(() => {
-      const main = document.querySelector('main[data-home-main="true"]');
-      if (main && getComputedStyle(main).visibility === 'hidden') main.style.visibility = 'visible';
-      const nav = document.querySelector('header[data-nav-root="true"]');
-      if (nav && Number(getComputedStyle(nav).opacity) < 0.1) {
-        nav.style.opacity = '1';
-        nav.style.pointerEvents = 'auto';
-      }
-    }, 1800);
+    const watchdog=setInterval(()=>{
+      const h=document.querySelector('[data-hero-section="true"]');
+      if(!h){layer.style.display='none';return;}
+      layer.style.display='block';
+      if(layer.parentNode!==document.body) document.body.appendChild(layer);
+      syncLayer();canvas.style.opacity='1';
+    },700);
+    addEventListener('pagehide',()=>{clearInterval(watchdog);cancelAnimationFrame(raf)},{once:true});
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
-  else init();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
