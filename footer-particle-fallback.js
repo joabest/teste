@@ -1,23 +1,177 @@
 (() => {
   'use strict';
-  if (window.__WE_PARTICLE_OBJECT__) return;
-  window.__WE_PARTICLE_OBJECT__ = true;
-  function boot() {
+  if (window.__WE_PARTICLE_V3__) return;
+  window.__WE_PARTICLE_V3__ = true;
+
+  function boot(){
     const phrase=document.querySelector('[data-footer-phrase="true"]');
-    if(!phrase) return setTimeout(boot,300);
+    const footer=document.querySelector('[data-footer-section="true"]');
+    if(!phrase||!footer) return setTimeout(boot,220);
+
+    document.getElementById('we-particle-object')?.remove();
+    document.getElementById('we-particle-object-v3')?.remove();
+    document.getElementById('we-particle-rain')?.remove();
+    document.getElementById('we-particle-rain-v3')?.remove();
+
     const section=phrase.closest('section')||phrase.parentElement;
-    if(!section||section.querySelector('#we-particle-object')) return;
-    section.style.position='relative'; phrase.style.position='relative'; phrase.style.zIndex='2';
-    const cv=document.createElement('canvas'); cv.id='we-particle-object'; cv.title='Click to disperse particles';
-    Object.assign(cv.style,{position:'absolute',width:'min(48vw,680px)',height:'min(42vw,500px)',right:'1%',top:'50%',transform:'translateY(-50%)',zIndex:'1',cursor:'pointer',pointerEvents:'auto',opacity:'.88'});
-    section.appendChild(cv); const c=cv.getContext('2d'); if(!c)return;
-    let W=0,H=0,D=1,raf=0,t0=performance.now(),gone=false;
-    const pts=[]; for(let u=0;u<48;u++)for(let v=0;v<18;v++)pts.push([u/48*Math.PI*2,v/18*Math.PI*2]);
-    function size(){const r=cv.getBoundingClientRect();W=Math.max(260,r.width);H=Math.max(200,r.height);D=Math.min(2,devicePixelRatio||1);cv.width=W*D;cv.height=H*D;c.setTransform(D,0,0,D,0,0)}
-    function rot(x,y,z,ay,ax){let cy=Math.cos(ay),sy=Math.sin(ay),cx=Math.cos(ax),sx=Math.sin(ax),X=cy*x+sy*z,Z=-sy*x+cy*z,Y=cx*y-sx*Z;Z=sx*y+cx*Z;return[X,Y,Z]}
-    function draw(now){if(gone)return;c.clearRect(0,0,W,H);const tt=(now-t0)*.0003,cx=W*.55,cy=H*.52,sc=Math.min(W,H)*.30;for(const p of pts){let u=p[0],v=p[1],R=1,r=.37,x=(R+r*Math.cos(v))*Math.cos(u),y=r*Math.sin(v),z=(R+r*Math.cos(v))*Math.sin(u);[x,y,z]=rot(x,y,z,tt,-.32+Math.sin(tt*.8)*.07);let dep=(z+1.45)/2.9,px=cx+x*sc,py=cy+y*sc;c.beginPath();c.arc(px,py,.6+dep*1.2,0,Math.PI*2);c.fillStyle=`rgba(240,240,248,${.10+Math.max(0,dep)*.58})`;c.fill()}raf=requestAnimationFrame(draw)}
-    function explode(){if(gone)return;gone=true;cancelAnimationFrame(raf);cv.style.opacity='0';const ov=document.createElement('canvas');ov.id='we-particle-rain';Object.assign(ov.style,{position:'fixed',inset:'0',width:'100vw',height:'100vh',zIndex:'30',pointerEvents:'none'});document.body.appendChild(ov);const q=ov.getContext('2d'),d=Math.min(2,devicePixelRatio||1),w=innerWidth,h=innerHeight;ov.width=w*d;ov.height=h*d;q.setTransform(d,0,0,d,0,0);const r=cv.getBoundingClientRect(),ox=r.left+r.width*.55,oy=r.top+r.height*.52;const ps=Array.from({length:620},()=>{const a=Math.random()*Math.PI*2,s=1.5+Math.random()*9;return{x:ox+(Math.random()-.5)*120,y:oy+(Math.random()-.5)*85,vx:Math.cos(a)*s+(Math.random()-.5)*2,vy:Math.sin(a)*s-3-Math.random()*5,g:.055+Math.random()*.09,r:.5+Math.random()*1.7,a:.35+Math.random()*.65,life:1}});const born=performance.now();function fall(now){q.clearRect(0,0,w,h);let alive=0;for(const p of ps){p.vy+=p.g;p.vx*=.997;p.x+=p.vx;p.y+=p.vy;p.life-=.0018;if(p.y>h+30||p.life<=0)continue;alive++;q.beginPath();q.arc(p.x,p.y,p.r,0,Math.PI*2);q.fillStyle=`rgba(240,240,248,${p.a*p.life})`;q.fill()}if(alive&&now-born<7200)requestAnimationFrame(fall);else{ov.remove();gone=false;cv.style.opacity='.88';t0=performance.now();raf=requestAnimationFrame(draw)}}requestAnimationFrame(fall)}
-    cv.addEventListener('click',explode);phrase.addEventListener('click',e=>{if(!e.target.closest('a'))explode()});addEventListener('resize',size,{passive:true});size();raf=requestAnimationFrame(draw);
+    section.style.position='relative';
+    section.style.overflow='visible';
+    phrase.style.position='relative';
+    phrase.style.zIndex='3';
+    footer.style.position='relative';
+
+    const cv=document.createElement('canvas');
+    cv.id='we-particle-object-v3';
+    cv.title='Click to release the particles';
+    cv.setAttribute('aria-label','Interactive particle sphere');
+    Object.assign(cv.style,{
+      position:'absolute',
+      width:'min(66vw,930px)',
+      height:'min(46vw,620px)',
+      right:'-2%',
+      top:'47%',
+      transform:'translateY(-50%)',
+      zIndex:'2',
+      cursor:'pointer',
+      pointerEvents:'auto',
+      opacity:'1',
+      transition:'opacity 260ms ease',
+      touchAction:'pan-y'
+    });
+    section.appendChild(cv);
+    const c=cv.getContext('2d',{alpha:true});
+    if(!c) return;
+
+    let W=0,H=0,D=1,raf=0,t0=performance.now(),dropped=false;
+    let lastProjected=[];
+    const N=1900;
+    const golden=Math.PI*(3-Math.sqrt(5));
+    const pts=Array.from({length:N},(_,i)=>{
+      const y=1-(i/(N-1))*2;
+      const rr=Math.sqrt(Math.max(0,1-y*y));
+      const th=golden*i;
+      const warp=1+.055*Math.sin(th*3.1+i*.017)+.025*Math.cos(i*.11);
+      return {
+        x:Math.cos(th)*rr*warp,
+        y:y*(.92+.035*Math.sin(i*.09)),
+        z:Math.sin(th)*rr*warp,
+        seed:(i*37)%101/101,
+        tint:i%41===0?1:(i%67===0?2:0)
+      };
+    });
+
+    function resize(){
+      const r=cv.getBoundingClientRect();
+      W=Math.max(300,r.width);H=Math.max(260,r.height);D=Math.min(2,devicePixelRatio||1);
+      cv.width=Math.round(W*D);cv.height=Math.round(H*D);c.setTransform(D,0,0,D,0,0);
+    }
+
+    function rotate(x,y,z,ay,ax){
+      const cy=Math.cos(ay),sy=Math.sin(ay),cx=Math.cos(ax),sx=Math.sin(ax);
+      let X=cy*x+sy*z,Z=-sy*x+cy*z,Y=cx*y-sx*Z;Z=sx*y+cx*Z;
+      return [X,Y,Z];
+    }
+
+    function draw(now){
+      if(dropped) return;
+      c.clearRect(0,0,W,H);
+      const tt=(now-t0)*.00022;
+      const cx=W*.53,cy=H*.50,scale=Math.min(W,H)*.39;
+      lastProjected=[];
+
+      // faint halo, matching the soft volumetric sphere on the original site
+      const halo=c.createRadialGradient(cx,cy,scale*.12,cx,cy,scale*1.1);
+      halo.addColorStop(0,'rgba(255,255,255,.018)');halo.addColorStop(.72,'rgba(255,255,255,.008)');halo.addColorStop(1,'rgba(255,255,255,0)');
+      c.fillStyle=halo;c.beginPath();c.arc(cx,cy,scale*1.1,0,Math.PI*2);c.fill();
+
+      for(let i=0;i<pts.length;i++){
+        const p=pts[i];
+        let [x,y,z]=rotate(p.x,p.y,p.z,tt,-.16+Math.sin(tt*.8)*.08);
+        // Organic displacement keeps it from looking like a perfect CG ball.
+        const pulse=1+.018*Math.sin(tt*4+p.seed*12)+.012*Math.sin(i*.13+tt*2);
+        x*=pulse;y*=pulse;
+        const perspective=1/(1.72-z*.18);
+        const px=cx+x*scale*perspective*1.54;
+        const py=cy+y*scale*perspective*1.31;
+        const depth=(z+1.15)/2.3;
+        const alpha=.16+Math.max(0,depth)*.73;
+        const size=.48+Math.max(0,depth)*1.05;
+        let fill=`rgba(242,242,248,${alpha})`;
+        if(p.tint===1) fill=`rgba(228,0,124,${alpha*.78})`;
+        else if(p.tint===2) fill=`rgba(0,184,210,${alpha*.72})`;
+        c.beginPath();c.arc(px,py,size,0,Math.PI*2);c.fillStyle=fill;c.fill();
+        lastProjected.push({x:px,y:py,r:size,a:alpha,tint:p.tint,z});
+      }
+      raf=requestAnimationFrame(draw);
+    }
+
+    function release(){
+      if(dropped||!lastProjected.length) return;
+      dropped=true;cancelAnimationFrame(raf);
+      const footerRect=footer.getBoundingClientRect();
+      const objectRect=cv.getBoundingClientRect();
+      const overlay=document.createElement('canvas');
+      overlay.id='we-particle-rain-v3';
+      Object.assign(overlay.style,{position:'absolute',inset:'0',width:'100%',height:'100%',zIndex:'2',pointerEvents:'none'});
+      footer.appendChild(overlay);
+      const q=overlay.getContext('2d',{alpha:true});
+      if(!q) return;
+      const d=Math.min(2,devicePixelRatio||1);
+      const FW=Math.max(320,footer.clientWidth),FH=Math.max(600,footer.scrollHeight);
+      overlay.width=Math.round(FW*d);overlay.height=Math.round(FH*d);q.setTransform(d,0,0,d,0,0);
+
+      const ox=objectRect.left-footerRect.left;
+      const oy=objectRect.top-footerRect.top;
+      const particles=lastProjected.map((p,i)=>{
+        const spread=((i*47)%101)/101-.5;
+        return {
+          x:ox+p.x,y:oy+p.y,
+          vx:spread*(.55+Math.random()*1.5)+(p.x-W*.53)/Math.max(220,W)*.8,
+          vy:-.18-Math.random()*1.7,
+          g:.052+Math.random()*.068,
+          r:p.r*(.76+Math.random()*.48),
+          a:p.a*(.62+Math.random()*.38),
+          tint:p.tint,
+          settled:false,
+          floor:FH-3-Math.pow(Math.random(),2.4)*(10+Math.max(0,42-Math.abs((ox+p.x)-FW*.5)*.035))
+        };
+      });
+      // A small number of stray particles makes the trail extend all the way through the footer.
+      for(let i=0;i<120;i++) particles.push({
+        x:FW*Math.random(),y:Math.max(0,oy+H*.55+Math.random()*Math.max(80,FH-(oy+H*.55))),
+        vx:(Math.random()-.5)*.18,vy:.15+Math.random()*.6,g:.018+Math.random()*.03,r:.45+Math.random()*.9,a:.12+Math.random()*.3,tint:0,settled:false,
+        floor:FH-2-Math.random()*14
+      });
+
+      cv.style.opacity='0';
+      cv.style.pointerEvents='none';
+      let last=performance.now();
+      function fall(now){
+        const dt=Math.min(2.2,(now-last)/16.67||1);last=now;
+        q.clearRect(0,0,FW,FH);
+        let moving=0;
+        for(const p of particles){
+          if(!p.settled){
+            p.vy+=p.g*dt;p.vx*=.996;p.x+=p.vx*dt;p.y+=p.vy*dt;
+            if(p.x<0){p.x=0;p.vx=Math.abs(p.vx)*.45}else if(p.x>FW){p.x=FW;p.vx=-Math.abs(p.vx)*.45}
+            if(p.y>=p.floor){p.y=p.floor;p.vy=0;p.vx=0;p.settled=true}else moving++;
+          }
+          q.beginPath();q.arc(p.x,p.y,p.r,0,Math.PI*2);
+          if(p.tint===1) q.fillStyle=`rgba(228,0,124,${p.a})`;
+          else if(p.tint===2) q.fillStyle=`rgba(0,184,210,${p.a})`;
+          else q.fillStyle=`rgba(242,242,248,${p.a})`;
+          q.fill();
+        }
+        if(moving>0) requestAnimationFrame(fall);
+      }
+      requestAnimationFrame(fall);
+    }
+
+    cv.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();release()});
+    phrase.addEventListener('click',e=>{if(!e.target.closest('a'))release()});
+    addEventListener('resize',()=>{if(!dropped)resize()},{passive:true});
+    resize();raf=requestAnimationFrame(draw);
   }
+
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
