@@ -1,0 +1,247 @@
+name: Fix critical visual runtime
+
+on:
+  push:
+    branches: [test]
+    paths:
+      - '.github/workflows/fix-visual-runtime.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: test
+
+      - name: Build self-contained asset and interaction fallbacks
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, mimetypes, re
+
+          root = Path('.')
+
+          # 1) Inline critical images so the mirror no longer depends on broken runtime asset requests.
+          assets = [
+            'logos/clients/abrasivos-y-conversiones-ideal.webp',
+            'logos/clients/zebra-technologies.webp',
+            'logos/clients/divacup.webp',
+            'logos/clients/enviaflores.webp',
+            'logos/clients/heli.webp',
+            'logos/clients/phonix-global.webp',
+            'logos/clients/stwst.webp',
+            'logos/clients/kpnp.webp',
+            'logos/clients/neg.webp',
+            'logos/clients/br.webp',
+            'logos/clients/ht.webp',
+            'logos/clients/tnf.webp',
+            'images/page-covers/og-ai-business-check-EN.jpg',
+            'images/page-covers/og-ai-check-EN.jpg',
+            'images/page-covers/og-seo-check-EN.jpg',
+          ]
+          mapping = {}
+          for rel in assets:
+            p = root / rel
+            if not p.exists():
+              print('missing', rel)
+              continue
+            mime = mimetypes.guess_type(rel)[0] or 'application/octet-stream'
+            mapping['/' + rel] = f'data:{mime};base64,' + base64.b64encode(p.read_bytes()).decode('ascii')
+
+          items = ',\n'.join(f'    {k!r}: {v!r}' for k,v in mapping.items())
+          asset_js = f'''(() => {{
+            'use strict';
+            if (window.__WE_INLINE_ASSETS__) return;
+            window.__WE_INLINE_ASSETS__ = true;
+            const ASSETS = {{\n{items}\n  }};
+
+            function originalPath(img) {{
+              const remembered = img.dataset.mirrorOriginalSrc;
+              if (remembered) return remembered;
+              let raw = img.getAttribute('src') || '';
+              try {{
+                const u = new URL(raw, location.href);
+                if (u.pathname === '/_next/image') {{
+                  const nested = u.searchParams.get('url');
+                  if (nested) raw = nested;
+                }}
+                const p = new URL(raw, location.href).pathname;
+                img.dataset.mirrorOriginalSrc = p;
+                return p;
+              }} catch {{ return raw; }}
+            }}
+
+            function fixImage(img) {{
+              if (!(img instanceof HTMLImageElement)) return;
+              if ((img.getAttribute('src') || '').startsWith('data:')) return;
+              const p = originalPath(img);
+              const data = ASSETS[p];
+              if (!data) return;
+              if (p.startsWith('/logos/clients/')) img.classList.add('mirror-client-logo');
+              img.removeAttribute('srcset');
+              img.removeAttribute('sizes');
+              img.src = data;
+            }}
+
+            function scan(node=document) {{
+              if (node instanceof HTMLImageElement) fixImage(node);
+              if (node.querySelectorAll) node.querySelectorAll('img').forEach(fixImage);
+            }}
+
+            const start = () => {{
+              scan();
+              new MutationObserver(ms => {{
+                for (const m of ms) {{
+                  if (m.type === 'attributes') fixImage(m.target);
+                  m.addedNodes && m.addedNodes.forEach(scan);
+                }}
+              }}).observe(document.documentElement, {{subtree:true, childList:true, attributes:true, attributeFilter:['src','srcset']}});
+            }};
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {{once:true}}); else start();
+          }})();\n'''
+          Path('mirror-ui-fixes.js').write_text(asset_js, encoding='utf-8')
+
+          # 2) Make the existing globe fallback location aware and orient the visitor toward the camera.
+          gp = Path('globe-fallback.js')
+          g = gp.read_text(encoding='utf-8')
+          if 'let visitor = {' not in g:
+            g = g.replace(
+              "  function deg(v) { return v * Math.PI / 180; }",
+              "  let visitor = { lat: -23.5505, lng: -46.6333, city: 'São Paulo' };\n"
+              "  fetch('https://ipapi.co/json/').then(r => r.ok ? r.json() : null).then(d => {\n"
+              "    if (!d) return;\n"
+              "    const lat = Number(d.latitude), lng = Number(d.longitude);\n"
+              "    if (Number.isFinite(lat) && Number.isFinite(lng)) visitor = { lat, lng, city: String(d.city || d.region || 'ONLINE').trim() || 'ONLINE' };\n"
+              "  }).catch(() => {});\n\n"
+              "  function deg(v) { return v * Math.PI / 180; }"
+            )
+          g = g.replace("const a = { lon: -46.6333, lat: -23.5505 };", "const a = { lon: visitor.lng, lat: visitor.lat };")
+          g = g.replace("if (pa.z > 0.05) drawLabel(pa.x, pa.y, cssW < 760 ? 'ONLINE · SP' : 'ONLINE · SÃO PAULO');",
+                        "if (pa.z > -0.05) drawLabel(pa.x, pa.y, 'ONLINE · ' + String(visitor.city || 'ONLINE').toUpperCase());")
+          g = g.replace("const rotation = deg(-15) + (reduced ? 0 : t * 0.000055) + mouseX * 0.085;",
+                        "const rotation = -deg(visitor.lng) + (reduced ? 0 : Math.sin(t * 0.00018) * 0.05) + mouseX * 0.085;")
+          gp.write_text(g, encoding='utf-8')
+
+          # 3) Stable recreation of the interactive particle object behind the final phrase.
+          particle_js = r'''(() => {
+            'use strict';
+            if (window.__WE_FOOTER_PARTICLE_FALLBACK__) return;
+            window.__WE_FOOTER_PARTICLE_FALLBACK__ = true;
+
+            const wait = () => {
+              const phrase = document.querySelector('[data-footer-phrase="true"]');
+              if (!phrase) return setTimeout(wait, 350);
+              const section = phrase.closest('section') || phrase.parentElement;
+              if (!section || section.querySelector('#we-particle-object')) return;
+              section.style.position = 'relative';
+              phrase.style.position = 'relative';
+              phrase.style.zIndex = '2';
+
+              const canvas = document.createElement('canvas');
+              canvas.id = 'we-particle-object';
+              canvas.setAttribute('aria-label', 'Interactive particle object');
+              canvas.title = 'Click to disperse';
+              Object.assign(canvas.style, {
+                position:'absolute', width:'min(48vw,680px)', height:'min(48vw,520px)',
+                right:'2%', top:'48%', transform:'translateY(-50%)', zIndex:'1',
+                cursor:'pointer', pointerEvents:'auto', opacity:'.9'
+              });
+              section.appendChild(canvas);
+              const ctx = canvas.getContext('2d');
+              if (!ctx) return;
+              let W=0,H=0,D=1,raf=0,t0=performance.now(), exploded=false;
+              const pts=[];
+              for(let u=0;u<46;u++) for(let v=0;v<17;v++) pts.push({u:u/46*Math.PI*2,v:v/17*Math.PI*2,n:(u*31+v*17)%13});
+
+              function resize(){
+                const r=canvas.getBoundingClientRect(); W=Math.max(280,r.width); H=Math.max(220,r.height); D=Math.min(2,devicePixelRatio||1);
+                canvas.width=Math.round(W*D); canvas.height=Math.round(H*D); ctx.setTransform(D,0,0,D,0,0);
+              }
+              function rotate(x,y,z,ay,ax){
+                const cy=Math.cos(ay),sy=Math.sin(ay),cx=Math.cos(ax),sx=Math.sin(ax);
+                let X=cy*x+sy*z, Z=-sy*x+cy*z, Y=cx*y-sx*Z; Z=sx*y+cx*Z; return [X,Y,Z];
+              }
+              function frame(now){
+                if(exploded) return;
+                ctx.clearRect(0,0,W,H); const tt=(now-t0)*0.00028;
+                const cx=W*.55, cy=H*.52, scale=Math.min(W,H)*.31;
+                for(const p of pts){
+                  const R=1.0,r=.37; let x=(R+r*Math.cos(p.v))*Math.cos(p.u), y=r*Math.sin(p.v), z=(R+r*Math.cos(p.v))*Math.sin(p.u);
+                  [x,y,z]=rotate(x,y,z,tt, -.34+Math.sin(tt*.7)*.08);
+                  const depth=(z+1.5)/3, px=cx+x*scale, py=cy+y*scale;
+                  const a=.13+Math.max(0,depth)*.62;
+                  ctx.beginPath(); ctx.arc(px,py,.65+depth*1.1,0,Math.PI*2);
+                  ctx.fillStyle=`rgba(240,240,248,${a})`; ctx.fill();
+                }
+                raf=requestAnimationFrame(frame);
+              }
+
+              function explode(){
+                if(exploded) return; exploded=true; cancelAnimationFrame(raf);
+                canvas.style.opacity='0';
+                const overlay=document.createElement('canvas'); overlay.id='we-particle-rain';
+                Object.assign(overlay.style,{position:'fixed',inset:'0',width:'100vw',height:'100vh',zIndex:'30',pointerEvents:'none'});
+                document.body.appendChild(overlay); const c=overlay.getContext('2d');
+                const d=Math.min(2,devicePixelRatio||1), w=innerWidth,h=innerHeight; overlay.width=w*d;overlay.height=h*d;c.setTransform(d,0,0,d,0,0);
+                const rect=canvas.getBoundingClientRect(), ox=rect.left+rect.width*.55, oy=rect.top+rect.height*.52;
+                const rain=Array.from({length:520},(_,i)=>{const a=Math.random()*Math.PI*2,s=1.5+Math.random()*9;return{x:ox+(Math.random()-.5)*110,y:oy+(Math.random()-.5)*80,vx:Math.cos(a)*s+(Math.random()-.5)*2,vy:Math.sin(a)*s-3-Math.random()*5,g:.055+Math.random()*.09,r:.6+Math.random()*1.6,a:.45+Math.random()*.55,life:1,tw:Math.random()*8}});
+                const born=performance.now();
+                const fall=(now)=>{c.clearRect(0,0,w,h);const dt=Math.min(2,(now-(fall.last||now))/16.67);fall.last=now;let alive=0;
+                  for(const p of rain){p.vy+=p.g*dt;p.vx*=.997;p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=.0015*dt;if(p.y>h+30||p.life<=0)continue;alive++;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle=`rgba(240,240,248,${p.a*p.life})`;c.fill();}
+                  if(alive && now-born<7200) requestAnimationFrame(fall); else {overlay.remove(); exploded=false;canvas.style.opacity='.9';t0=performance.now();raf=requestAnimationFrame(frame);}
+                };requestAnimationFrame(fall);
+              }
+              canvas.addEventListener('click', explode);
+              phrase.addEventListener('click', e=>{ if(e.target.closest('a')) return; explode(); });
+              addEventListener('resize', resize,{passive:true});resize();raf=requestAnimationFrame(frame);
+            };
+            if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wait,{once:true}); else wait();
+          })();
+          '''
+          Path('footer-particle-fallback.js').write_text(particle_js, encoding='utf-8')
+
+          # 4) Ensure all fixes load from the head-level stability guard.
+          guard = Path('next-stability-guard.js')
+          txt = guard.read_text(encoding='utf-8')
+          marker = '/* MIRROR_CRITICAL_VISUAL_FIXES */'
+          if marker not in txt:
+            txt += r'''
+
+/* MIRROR_CRITICAL_VISUAL_FIXES */
+(() => {
+  const add = (src) => {
+    if (document.querySelector(`script[data-mirror-fix="${src}"]`)) return;
+    const s = document.createElement('script'); s.src = src; s.defer = true; s.dataset.mirrorFix = src;
+    (document.head || document.documentElement).appendChild(s);
+  };
+  add('/mirror-ui-fixes.js');
+  const home = location.pathname === '/' || location.pathname === '/index.html';
+  if (home) {
+    add('/globe-fallback.js');
+    add('/footer-particle-fallback.js');
+  }
+})();
+'''
+            guard.write_text(txt, encoding='utf-8')
+
+          # 5) Keep logos grayscale until hover even after src becomes data URI.
+          css = Path('mirror-fidelity.css')
+          s = css.read_text(encoding='utf-8')
+          if '.mirror-client-logo' not in s:
+            s += '\n.mirror-client-logo { filter: grayscale(1) !important; opacity:.72; transition:filter .25s ease,opacity .25s ease; }\n.mirror-client-logo:hover { filter:grayscale(0) !important; opacity:1; }\n'
+            css.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit visual fixes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mirror-ui-fixes.js globe-fallback.js footer-particle-fallback.js next-stability-guard.js mirror-fidelity.css
+          git commit -m "fix: restore globe tools logos and particle interaction" || exit 0
+          git push origin test
