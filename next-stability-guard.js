@@ -5,6 +5,51 @@
     try { return new URL(value, location.href); } catch { return null; }
   };
 
+  // Static-mirror polish shared by every page.
+  // Review avatars were rendered through Next Image Optimizer on the live app.
+  // In a static deployment /_next/image does not exist, so unwrap the original
+  // Google profile URL and load it directly.
+  const polishStaticDom = (root = document) => {
+    const scope = root && root.querySelectorAll ? root : document;
+
+    scope.querySelectorAll('img[src^="/_next/image?url="]').forEach((img) => {
+      try {
+        const optimized = new URL(img.getAttribute('src'), location.origin);
+        const direct = optimized.searchParams.get('url');
+        if (!direct) return;
+        const source = new URL(direct);
+        if (!/(^|\.)googleusercontent\.com$/i.test(source.hostname)) return;
+
+        img.removeAttribute('srcset');
+        img.removeAttribute('sizes');
+        img.referrerPolicy = 'no-referrer';
+        img.src = source.href;
+      } catch {}
+    });
+
+    // Remove the fixed Awwwards/Honorable Mention badge globally.
+    scope.querySelectorAll('a[href*="awwwards.com/sites/weevolveit"]').forEach((node) => node.remove());
+  };
+
+  const startStaticPolish = () => {
+    polishStaticDom(document);
+    if (!document.documentElement) return;
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node && node.nodeType === 1) polishStaticDom(node);
+        }
+      }
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startStaticPolish, { once: true });
+  } else {
+    startStaticPolish();
+  }
+
   // Stop Next's client router from taking over links in this static mirror.
   document.addEventListener('click', (event) => {
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
