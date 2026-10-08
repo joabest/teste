@@ -36,7 +36,6 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startStaticPolish,{once:true});
   else startStaticPolish();
 
-  // Static mirror: use document navigation instead of the App Router.
   document.addEventListener('click',event=>{
     if(event.defaultPrevented||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0)return;
     const a=event.target&&event.target.closest?event.target.closest('a[href]'):null;
@@ -65,7 +64,6 @@
     };
   }
 
-  // RSC/prefetch endpoints do not exist in the static copy.
   const nativeFetch=window.fetch?window.fetch.bind(window):null;
   if(nativeFetch){
     window.fetch=function(input,init){
@@ -81,7 +79,6 @@
     };
   }
 
-  // Missing lazy Next chunks can still be requested from the live public origin.
   const scriptSrc=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,'src');
   if(scriptSrc&&scriptSrc.set&&scriptSrc.get){
     Object.defineProperty(HTMLScriptElement.prototype,'src',{
@@ -135,20 +132,20 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V4 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V5 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v4="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v5="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV4=key;
+    s.dataset.mirrorV5=key;
     (document.head||document.documentElement).appendChild(s);
   };
-  load('/mirror-ui-fixes.js?v=4','assets');
+  load('/mirror-ui-fixes.js?v=5','assets');
   if(location.pathname==='/'||location.pathname==='/index.html'){
-    load('/globe-fallback.js?v=4','globe');
-    load('/method-scroll-fallback.js?v=4','method');
-    load('/footer-particle-fallback.js?v=4','particles');
+    load('/globe-live-v5.js?v=5','globe');
+    load('/method-scroll-fallback.js?v=5','method');
+    load('/footer-particle-fallback.js?v=5','particles');
   }
 })();
