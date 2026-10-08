@@ -168,3 +168,18 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observe, { once: true });
   else observe();
 })();
+
+
+/* MIRROR_CRITICAL_VISUAL_FIXES_V2 */
+(() => {
+  const load = src => {
+    if (document.querySelector(`script[data-mirror-v2="${src}"]`)) return;
+    const s=document.createElement('script'); s.src=src; s.defer=true; s.dataset.mirrorV2=src;
+    (document.head||document.documentElement).appendChild(s);
+  };
+  load('/mirror-ui-fixes.js');
+  if(location.pathname==='/'||location.pathname==='/index.html'){
+    load('/globe-fallback.js');
+    load('/footer-particle-fallback.js');
+  }
+})();

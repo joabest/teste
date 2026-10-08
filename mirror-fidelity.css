@@ -9,3 +9,5 @@ a[aria-label*="Awwwards"],
 [data-awwwards],
 .awwwards-ribbon,
 .awwwards-badge { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+
+.mirror-client-logo{filter:grayscale(1)!important;opacity:.72;transition:filter .25s ease,opacity .25s ease}.mirror-client-logo:hover{filter:grayscale(0)!important;opacity:1}

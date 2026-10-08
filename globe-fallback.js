@@ -34,6 +34,12 @@
     return false;
   }
 
+  let visitor = { lat: -23.5505, lng: -46.6333, city: 'São Paulo' };
+  fetch('https://ipapi.co/json/').then(r => r.ok ? r.json() : null).then(d => {
+    if (!d) return; const lat=Number(d.latitude), lng=Number(d.longitude);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) visitor={lat,lng,city:String(d.city||d.region||'ONLINE').trim()||'ONLINE'};
+  }).catch(()=>{});
+
   function deg(v) { return v * Math.PI / 180; }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
@@ -144,7 +150,7 @@
     }
 
     function drawRoute(rotY, tilt, cx, cy, r) {
-      const a = { lon: -46.6333, lat: -23.5505 };
+      const a = { lon: visitor.lng, lat: visitor.lat };
       const b = { lon: -100.3161, lat: 25.6866 };
       const pa = project(a.lon, a.lat, rotY, tilt, cx, cy, r);
       const pb = project(b.lon, b.lat, rotY, tilt, cx, cy, r);
@@ -176,7 +182,7 @@
       }
       ctx.restore();
 
-      if (pa.z > 0.05) drawLabel(pa.x, pa.y, cssW < 760 ? 'ONLINE · SP' : 'ONLINE · SÃO PAULO');
+      if (pa.z > -0.05) drawLabel(pa.x, pa.y, 'ONLINE · ' + String(visitor.city || 'ONLINE').toUpperCase());
     }
 
     function drawLabel(x, y, text) {
@@ -218,7 +224,7 @@
       const radius = mobile ? Math.min(cssW * 0.43, 185) : Math.min(cssW * 0.245, cssH * 0.34, 295);
       const cx = cssW / 2 + mouseX * (mobile ? 4 : 12);
       const cy = mobile ? Math.min(265, cssH * 0.35) : Math.min(338, cssH * 0.39) + mouseY * 6;
-      const rotation = deg(-15) + (reduced ? 0 : t * 0.000055) + mouseX * 0.085;
+      const rotation = -deg(visitor.lng) + (reduced ? 0 : Math.sin(t * 0.00018) * 0.05) + mouseX * 0.085;
       const tilt = deg(-8 + mouseY * 2.5);
 
       const bg = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius * 1.35);
