@@ -132,24 +132,24 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V7 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V8 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v7="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v8="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV7=key;
+    s.dataset.mirrorV8=key;
     (document.head||document.documentElement).appendChild(s);
   };
 
-  load('/mirror-ui-fixes.js?v=7','legacy-assets');
-  load('/asset-fallback-v6.js?v=7','assets');
-  load('/method-scroll-v6.js?v=7','method');
-  load('/footer-particle-guardian-v7.js?v=7','particles');
+  load('/mirror-ui-fixes.js?v=8','legacy-assets');
+  load('/asset-fallback-v6.js?v=8','assets');
+  load('/method-scroll-v6.js?v=8','method');
+  load('/footer-particle-guardian-v7.js?v=8','particles');
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
   if(p==='/'||p==='/index.html'||p==='/es'||p==='/es/index.html'){
-    load('/globe-live-v6.js?v=7','globe');
+    load('/globe-live-v6.js?v=8','globe');
   }
 })();
