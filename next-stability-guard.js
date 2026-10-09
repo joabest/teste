@@ -5,8 +5,6 @@
   const ANALYTICS_HOST=/((^|\.)googletagmanager\.com|(^|\.)google-analytics\.com)$/i;
   const MOBILE=matchMedia('(max-width: 767px)').matches;
 
-  // Critical mobile paint: the exported HTML ships the home <main> hidden and waits
-  // for animation/hydration. Override that before body parsing so text can paint now.
   if(MOBILE){
     document.documentElement.classList.add('intro-skip','perf-mobile');
     const critical=document.createElement('style');
@@ -66,7 +64,6 @@
       }
     });
     observer.observe(document.documentElement,{childList:true,subtree:true});
-    // Hydration is finite; do not keep a global observer alive for the whole session.
     setTimeout(()=>observer.disconnect(),5000);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startStaticPolish,{once:true});
@@ -172,14 +169,14 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V10 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V13 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v10="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v13="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV10=key;
+    s.dataset.mirrorV13=key;
     (document.head||document.documentElement).appendChild(s);
   };
 
@@ -189,9 +186,7 @@
     if(document.readyState==='complete')run();else addEventListener('load',run,{once:true});
   };
 
-  // Universal local-first image rescue. The old mirror-ui helper is intentionally
-  // not loaded: it forced known images to GitHub Raw even when Vercel had them.
-  ready(()=>load('/asset-fallback-v6.js?v=10','assets'));
+  ready(()=>load('/asset-fallback-v6.js?v=13','assets'));
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
   const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
@@ -202,7 +197,7 @@
       const io=new IntersectionObserver(entries=>{
         if(!entries[0]?.isIntersecting)return;
         io.disconnect();
-        load('/method-scroll-v6.js?v=10','method');
+        load('/method-scroll-v6.js?v=13','method');
       },{rootMargin:'1300px 0px 1300px 0px'});
       io.observe(method);
     });
@@ -210,7 +205,6 @@
 
   const homePages=new Set(['/','/index.html','/es','/es/index.html']);
   if(homePages.has(p)){
-    // Static globe is visual-only: let the headline and primary UI paint first.
-    idle(()=>load('/globe-live-v6.js?v=10','globe-static'));
+    idle(()=>load('/globe-live-v6.js?v=13','globe-interactive'));
   }
 })();
