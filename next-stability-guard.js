@@ -132,25 +132,24 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V6 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V7 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v6="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v7="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV6=key;
+    s.dataset.mirrorV7=key;
     (document.head||document.documentElement).appendChild(s);
   };
 
-  // Run on every page. Each helper safely does nothing when its target is absent.
-  load('/mirror-ui-fixes.js?v=6','legacy-assets');
-  load('/asset-fallback-v6.js?v=6','assets');
-  load('/method-scroll-v6.js?v=6','method');
-  load('/footer-particle-fallback.js?v=6','particles');
+  load('/mirror-ui-fixes.js?v=7','legacy-assets');
+  load('/asset-fallback-v6.js?v=7','assets');
+  load('/method-scroll-v6.js?v=7','method');
+  load('/footer-particle-guardian-v7.js?v=7','particles');
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
   if(p==='/'||p==='/index.html'||p==='/es'||p==='/es/index.html'){
-    load('/globe-live-v6.js?v=6','globe');
+    load('/globe-live-v6.js?v=7','globe');
   }
 })();
