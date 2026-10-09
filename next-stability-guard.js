@@ -8,7 +8,7 @@
   if(MOBILE){
     document.documentElement.classList.add('intro-skip','perf-mobile');
     const critical=document.createElement('style');
-    critical.id='we-mobile-critical-v10';
+    critical.id='we-mobile-critical-v14';
     critical.textContent=`@media(max-width:767px){
       main[data-home-main="true"]{visibility:visible!important}
       [data-intro-overlay="true"]{display:none!important}
@@ -17,7 +17,10 @@
       .ai-star,.stats-star-twinkle,.spark-trail-head,[data-pulse-ring="true"]{animation:none!important;filter:none!important}
       body>div[aria-hidden="true"].pointer-events-none.fixed.inset-0>canvas{display:none!important}
       main[data-home-main="true"] section[data-section]{content-visibility:auto;contain-intrinsic-size:900px}
-      main[data-home-main="true"] [class*="will-change"]{will-change:auto!important}
+      [data-method="true"]{content-visibility:visible!important;contain:none!important}
+      [data-method="true"] [data-method-rail="true"],
+      [data-method="true"] [data-method-track="true"],
+      [data-method="true"] [data-method-slide]{content-visibility:visible!important;contain:none!important}
       [data-method="true"] [data-method-track="true"]{will-change:transform!important}
     }`;
     (document.head||document.documentElement).appendChild(critical);
@@ -169,42 +172,35 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V13 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V14 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v13="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v14="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV13=key;
+    s.dataset.mirrorV14=key;
     (document.head||document.documentElement).appendChild(s);
   };
 
   const ready=fn=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
   const idle=fn=>{
-    const run=()=>('requestIdleCallback' in window?requestIdleCallback(fn,{timeout:1800}):setTimeout(fn,900));
+    const run=()=>('requestIdleCallback' in window?requestIdleCallback(fn,{timeout:1600}):setTimeout(fn,700));
     if(document.readyState==='complete')run();else addEventListener('load',run,{once:true});
   };
 
-  ready(()=>load('/asset-fallback-v6.js?v=13','assets'));
+  ready(()=>load('/asset-fallback-v6.js?v=14','assets'));
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
   const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
   if(methodPages.has(p)){
-    ready(()=>{
-      const method=document.querySelector('[data-method="true"]');
-      if(!method)return;
-      const io=new IntersectionObserver(entries=>{
-        if(!entries[0]?.isIntersecting)return;
-        io.disconnect();
-        load('/method-scroll-v6.js?v=13','method');
-      },{rootMargin:'1300px 0px 1300px 0px'});
-      io.observe(method);
-    });
+    // Load immediately: on mobile the previous observer could miss the method section.
+    ready(()=>load('/method-scroll-v6.js?v=14','method'));
   }
 
   const homePages=new Set(['/','/index.html','/es','/es/index.html']);
   if(homePages.has(p)){
-    idle(()=>load('/globe-live-v6.js?v=13','globe-interactive'));
+    ready(()=>load('/footer-particle-fallback.js?v=14','footer-particles'));
+    idle(()=>load('/globe-live-v6.js?v=14','globe-interactive'));
   }
 })();
