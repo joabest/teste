@@ -1,133 +1,125 @@
 (() => {
   'use strict';
-  if(window.__WE_METHOD_SCROLL_V10__) return;
-  window.__WE_METHOD_SCROLL_V10__=true;
+  if (window.__WE_METHOD_SCROLL_V11__) return;
+  window.__WE_METHOD_SCROLL_V11__ = true;
 
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-  const smooth=t=>t*t*(3-2*t);
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  let raf=0;
 
   function boot(){
     const method=document.querySelector('[data-method="true"]');
     const rail=method?.querySelector('[data-method-rail="true"]');
     const track=method?.querySelector('[data-method-track="true"]');
     const intro=method?.querySelector('[data-method-intro="true"]');
-    if(!method||!rail||!track) return setTimeout(boot,180);
-    if(method.dataset.methodV10==='1') return;
-    method.dataset.methodV10='1';
+    if(!method||!rail||!track) return setTimeout(boot,120);
 
     const slides=[...track.querySelectorAll('[data-method-slide]')];
     if(!slides.length) return;
 
-    let slideFrac=.70,startX=0,endX=0,lastW=0,lastH=0;
-    let raf=0,near=false;
+    let frac=innerWidth<768?1:.70;
 
     function layout(){
       const mobile=innerWidth<768;
-      slideFrac=mobile?1:.70;
-      const trackVW=slideFrac*slides.length*100;
-      const vh=Math.max(560,innerHeight);
+      frac=mobile?1:.70;
+      const vh=Math.max(520,innerHeight);
+      const totalVh=mobile?6.25:5.8;
 
       method.style.setProperty('position','relative','important');
-      method.style.setProperty('height',(vh*6.2)+'px','important');
-      method.style.setProperty('min-height',(vh*6.2)+'px','important');
+      method.style.setProperty('height',(vh*totalVh)+'px','important');
+      method.style.setProperty('min-height',(vh*totalVh)+'px','important');
       method.style.setProperty('overflow','visible','important');
 
       rail.style.setProperty('position','sticky','important');
       rail.style.setProperty('top','0','important');
-      rail.style.setProperty('height','100vh','important');
+      rail.style.setProperty('left','0','important');
       rail.style.setProperty('width','100vw','important');
+      rail.style.setProperty('height','100svh','important');
+      rail.style.setProperty('min-height','520px','important');
       rail.style.setProperty('overflow','hidden','important');
-      rail.style.setProperty('z-index','1','important');
-      rail.style.setProperty('background-color','var(--method-bg, transparent)','important');
+      rail.style.setProperty('z-index','2','important');
 
       if(intro){
         intro.style.setProperty('position','absolute','important');
         intro.style.setProperty('inset','0','important');
         intro.style.setProperty('pointer-events','none','important');
+        intro.style.setProperty('z-index','3','important');
       }
 
       track.style.setProperty('position','absolute','important');
       track.style.setProperty('left','0','important');
       track.style.setProperty('top','0','important');
       track.style.setProperty('display','flex','important');
-      track.style.setProperty('height','100vh','important');
-      track.style.setProperty('width',trackVW+'vw','important');
-      track.style.setProperty('transition','none','important');
-      track.style.setProperty('will-change','transform','important');
+      track.style.setProperty('flex-direction','row','important');
+      track.style.setProperty('align-items','stretch','important');
+      track.style.setProperty('width',(slides.length*frac*100)+'vw','important');
+      track.style.setProperty('height','100svh','important');
       track.style.setProperty('opacity','1','important');
+      track.style.setProperty('will-change','transform','important');
+      track.style.setProperty('transition','none','important');
+      track.style.setProperty('z-index','2','important');
 
       slides.forEach(slide=>{
-        slide.style.setProperty('width',(slideFrac*100)+'vw','important');
-        slide.style.setProperty('height','100vh','important');
-        slide.style.setProperty('min-height','560px','important');
-        slide.style.setProperty('flex','0 0 '+(slideFrac*100)+'vw','important');
+        slide.style.setProperty('position','relative','important');
         slide.style.setProperty('display','flex','important');
+        slide.style.setProperty('flex','0 0 '+(frac*100)+'vw','important');
+        slide.style.setProperty('width',(frac*100)+'vw','important');
+        slide.style.setProperty('max-width','none','important');
+        slide.style.setProperty('height','100svh','important');
+        slide.style.setProperty('min-height','520px','important');
+        slide.style.setProperty('margin','0','important');
+        slide.style.setProperty('overflow','visible','important');
         slide.style.setProperty('opacity','1','important');
       });
-
-      startX=innerWidth*(mobile?1.04:.98);
-      endX=mobile ? -innerWidth*(slides.length-1) : -innerWidth*2.80;
-      lastW=innerWidth;
-      lastH=innerHeight;
+      paint();
     }
 
     function paint(){
       raf=0;
-      if(!near || !document.body.contains(method)) return;
-
-      if(lastW!==innerWidth||lastH!==innerHeight) layout();
+      if(!document.body.contains(method)) return;
+      const mobile=innerWidth<768;
       const rect=method.getBoundingClientRect();
       const span=Math.max(1,method.offsetHeight-innerHeight);
-      const p=clamp((-rect.top)/span,0,1);
-      const move=smooth(clamp((p-.055)/.89,0,1));
-      const x=startX+(endX-startX)*move;
+      const p=clamp(-rect.top/span,0,1);
+
+      const introEnd=mobile?.12:.10;
+      const moveStart=mobile?.08:.07;
+      const moveEnd=mobile?.95:.92;
+      const q=ease(clamp((p-moveStart)/(moveEnd-moveStart),0,1));
+
+      const start=innerWidth*(mobile?1.02:.92);
+      const end=mobile
+        ? -innerWidth*(slides.length-1)
+        : -innerWidth*((slides.length*frac)-1.02);
+      const x=start+(end-start)*q;
       track.style.setProperty('transform',`translate3d(${x}px,0,0)`,'important');
 
       if(intro){
-        const fade=1-smooth(clamp((p-.01)/.09,0,1));
-        intro.style.setProperty('opacity',String(fade),'important');
-        intro.style.setProperty('transform',`translate3d(${(1-fade)*-5}vw,0,0)`,'important');
+        const f=1-ease(clamp(p/introEnd,0,1));
+        intro.style.setProperty('opacity',String(f),'important');
+        intro.style.setProperty('transform',`translate3d(${(1-f)*-7}vw,0,0)`,'important');
       }
 
       const center=innerWidth*.5;
       slides.forEach((slide,i)=>{
-        const sc=x+(i*slideFrac+slideFrac*.5)*innerWidth;
-        const dist=Math.abs(sc-center)/Math.max(1,innerWidth);
-        slide.style.setProperty('opacity',String(clamp(1-dist*.40,.36,1)),'important');
+        const sc=x+(i*frac+frac*.5)*innerWidth;
+        const d=Math.abs(sc-center)/innerWidth;
+        const op=mobile?clamp(1-d*1.15,.04,1):clamp(1-d*.58,.28,1);
+        slide.style.setProperty('opacity',String(op),'important');
       });
     }
 
     function schedule(){
-      if(!near||raf) return;
+      if(raf) return;
       raf=requestAnimationFrame(paint);
     }
 
-    function onResize(){
-      layout();
-      schedule();
-    }
-
+    addEventListener('scroll',schedule,{passive:true});
+    addEventListener('resize',()=>{layout();schedule();},{passive:true});
     layout();
 
-    const io=new IntersectionObserver(entries=>{
-      near=!!entries[0]?.isIntersecting;
-      if(near) schedule();
-    },{rootMargin:'120vh 0px 120vh 0px'});
-    io.observe(method);
-
-    addEventListener('scroll',schedule,{passive:true});
-    addEventListener('resize',onResize,{passive:true});
-
-    // Two finite post-hydration corrections instead of a permanent interval.
-    setTimeout(()=>{layout();schedule();},650);
-    setTimeout(()=>{layout();schedule();},1800);
-
-    addEventListener('pagehide',()=>{
-      if(raf) cancelAnimationFrame(raf);
-      io.disconnect();
-      removeEventListener('scroll',schedule);
-      removeEventListener('resize',onResize);
-    },{once:true});
+    // React can modify inline geometry after hydration. Reassert it a few times.
+    [350,900,1800,3200].forEach(ms=>setTimeout(()=>{layout();schedule();},ms));
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
