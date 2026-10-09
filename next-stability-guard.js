@@ -1,7 +1,8 @@
 (() => {
   'use strict';
 
-  const sameOriginUrl=(value)=>{try{return new URL(value,location.href)}catch{return null}};
+  const sameOriginUrl=value=>{try{return new URL(value,location.href)}catch{return null}};
+  const ANALYTICS_HOST=/((^|\.)googletagmanager\.com|(^|\.)google-analytics\.com)$/i;
 
   const polishStaticDom=(root=document)=>{
     const scope=root&&root.querySelectorAll?root:document;
@@ -10,7 +11,7 @@
         const optimized=new URL(img.getAttribute('src'),location.origin);
         const direct=optimized.searchParams.get('url');
         if(!direct)return;
-        const source=new URL(direct);
+        const source=new URL(direct,location.origin);
         if(!/(^|\.)googleusercontent\.com$/i.test(source.hostname))return;
         img.removeAttribute('srcset');
         img.removeAttribute('sizes');
@@ -38,7 +39,7 @@
 
   document.addEventListener('click',event=>{
     if(event.defaultPrevented||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0)return;
-    const a=event.target&&event.target.closest?event.target.closest('a[href]'):null;
+    const a=event.target?.closest?.('a[href]');
     if(!a||a.hasAttribute('download')||(a.target&&a.target!=='_self'))return;
     const href=a.getAttribute('href');
     if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')||href.startsWith('javascript:'))return;
@@ -64,14 +65,15 @@
     };
   }
 
-  const nativeFetch=window.fetch?window.fetch.bind(window):null;
+  const nativeFetch=window.fetch?.bind(window);
   if(nativeFetch){
     window.fetch=function(input,init){
       let url;
       try{url=new URL(typeof input==='string'?input:input.url,location.href)}catch{return nativeFetch(input,init)}
+      if(ANALYTICS_HOST.test(url.hostname))return Promise.resolve(new Response('',{status:204}));
       let isRsc=url.searchParams.has('_rsc');
       try{
-        const headers=new Headers(init&&init.headers?init.headers:(typeof input!=='string'&&input.headers?input.headers:undefined));
+        const headers=new Headers(init?.headers||(typeof input!=='string'&&input.headers?input.headers:undefined));
         if(headers.get('RSC')==='1'||headers.has('Next-Router-State-Tree'))isRsc=true;
       }catch{}
       if(isRsc&&url.origin===location.origin&&url.pathname!==location.pathname)return new Promise(()=>{});
@@ -80,14 +82,15 @@
   }
 
   const scriptSrc=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,'src');
-  if(scriptSrc&&scriptSrc.set&&scriptSrc.get){
+  if(scriptSrc?.set&&scriptSrc?.get){
     Object.defineProperty(HTMLScriptElement.prototype,'src',{
       configurable:true,enumerable:scriptSrc.enumerable,get:scriptSrc.get,
       set(value){
         let next=value;
         try{
           const u=new URL(value,location.href);
-          if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&!this.hasAttribute('data-static-initial'))next='https://weevolveit.com'+u.pathname+u.search;
+          if(ANALYTICS_HOST.test(u.hostname))next='data:text/javascript,/*analytics-disabled*/';
+          else if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&!this.hasAttribute('data-static-initial'))next='https://weevolveit.com'+u.pathname+u.search;
         }catch{}
         return scriptSrc.set.call(this,next);
       }
@@ -95,14 +98,15 @@
   }
 
   const linkHref=Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype,'href');
-  if(linkHref&&linkHref.set&&linkHref.get){
+  if(linkHref?.set&&linkHref?.get){
     Object.defineProperty(HTMLLinkElement.prototype,'href',{
       configurable:true,enumerable:linkHref.enumerable,get:linkHref.get,
       set(value){
         let next=value;
         try{
           const u=new URL(value,location.href);
-          if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&this.rel==='stylesheet')next='https://weevolveit.com'+u.pathname+u.search;
+          if(ANALYTICS_HOST.test(u.hostname))next='data:text/plain,';
+          else if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&this.rel==='stylesheet')next='https://weevolveit.com'+u.pathname+u.search;
         }catch{}
         return linkHref.set.call(this,next);
       }
@@ -112,7 +116,7 @@
   let recovered=false;
   const recover=()=>{
     if(recovered)return;
-    const text=(document.body&&document.body.innerText||'').toLowerCase();
+    const text=(document.body?.innerText||'').toLowerCase();
     if(!text.includes("this page couldn't load")&&!text.includes('this page could not load'))return;
     recovered=true;
     const key='wee-static-recover:'+location.pathname+location.search;
@@ -132,24 +136,24 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V8 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V9 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v8="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v9="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV8=key;
+    s.dataset.mirrorV9=key;
     (document.head||document.documentElement).appendChild(s);
   };
 
-  load('/mirror-ui-fixes.js?v=8','legacy-assets');
-  load('/asset-fallback-v6.js?v=8','assets');
-  load('/method-scroll-v6.js?v=8','method');
-  load('/footer-particle-guardian-v7.js?v=8','particles');
+  load('/mirror-ui-fixes.js?v=9','legacy-assets');
+  load('/asset-fallback-v6.js?v=9','assets');
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
-  if(p==='/'||p==='/index.html'||p==='/es'||p==='/es/index.html'){
-    load('/globe-live-v6.js?v=8','globe');
-  }
+  const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
+  if(methodPages.has(p))load('/method-scroll-v6.js?v=9','method');
+
+  const homePages=new Set(['/','/index.html','/es','/es/index.html']);
+  if(homePages.has(p))load('/globe-live-v6.js?v=9','globe-static');
 })();
