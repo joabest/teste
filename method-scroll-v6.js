@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  if(window.__WE_METHOD_SCROLL_V6__) return;
-  window.__WE_METHOD_SCROLL_V6__=true;
+  if(window.__WE_METHOD_SCROLL_V10__) return;
+  window.__WE_METHOD_SCROLL_V10__=true;
 
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const smooth=t=>t*t*(3-2*t);
@@ -12,12 +12,14 @@
     const track=method?.querySelector('[data-method-track="true"]');
     const intro=method?.querySelector('[data-method-intro="true"]');
     if(!method||!rail||!track) return setTimeout(boot,180);
-    if(method.dataset.methodV6==='1') return;
-    method.dataset.methodV6='1';
+    if(method.dataset.methodV10==='1') return;
+    method.dataset.methodV10='1';
 
     const slides=[...track.querySelectorAll('[data-method-slide]')];
     if(!slides.length) return;
-    let slideFrac=.70,startX=0,endX=0,lastW=0,lastH=0,raf=0;
+
+    let slideFrac=.70,startX=0,endX=0,lastW=0,lastH=0;
+    let raf=0,near=false;
 
     function layout(){
       const mobile=innerWidth<768;
@@ -65,10 +67,15 @@
 
       startX=innerWidth*(mobile?1.04:.98);
       endX=mobile ? -innerWidth*(slides.length-1) : -innerWidth*2.80;
-      lastW=innerWidth;lastH=innerHeight;
+      lastW=innerWidth;
+      lastH=innerHeight;
     }
 
     function paint(){
+      raf=0;
+      if(!near || !document.body.contains(method)) return;
+
+      if(lastW!==innerWidth||lastH!==innerHeight) layout();
       const rect=method.getBoundingClientRect();
       const span=Math.max(1,method.offsetHeight-innerHeight);
       const p=clamp((-rect.top)/span,0,1);
@@ -88,25 +95,41 @@
         const dist=Math.abs(sc-center)/Math.max(1,innerWidth);
         slide.style.setProperty('opacity',String(clamp(1-dist*.40,.36,1)),'important');
       });
+    }
 
-      if(lastW!==innerWidth||lastH!==innerHeight) layout();
+    function schedule(){
+      if(!near||raf) return;
       raf=requestAnimationFrame(paint);
     }
 
-    layout();
-    raf=requestAnimationFrame(paint);
-    addEventListener('resize',layout,{passive:true});
-    addEventListener('pagehide',()=>cancelAnimationFrame(raf),{once:true});
+    function onResize(){
+      layout();
+      schedule();
+    }
 
-    // Hydration can rewrite inline styles; keep the geometry authoritative.
-    setInterval(()=>{
-      if(!document.body.contains(method)) return;
-      rail.style.setProperty('position','sticky','important');
-      rail.style.setProperty('top','0','important');
-      track.style.setProperty('display','flex','important');
-      track.style.setProperty('transition','none','important');
-    },800);
+    layout();
+
+    const io=new IntersectionObserver(entries=>{
+      near=!!entries[0]?.isIntersecting;
+      if(near) schedule();
+    },{rootMargin:'120vh 0px 120vh 0px'});
+    io.observe(method);
+
+    addEventListener('scroll',schedule,{passive:true});
+    addEventListener('resize',onResize,{passive:true});
+
+    // Two finite post-hydration corrections instead of a permanent interval.
+    setTimeout(()=>{layout();schedule();},650);
+    setTimeout(()=>{layout();schedule();},1800);
+
+    addEventListener('pagehide',()=>{
+      if(raf) cancelAnimationFrame(raf);
+      io.disconnect();
+      removeEventListener('scroll',schedule);
+      removeEventListener('resize',onResize);
+    },{once:true});
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
 })();
