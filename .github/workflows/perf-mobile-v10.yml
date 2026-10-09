@@ -1,0 +1,54 @@
+name: Mobile paint optimizer v10
+
+on:
+  push:
+    paths:
+      - '.github/workflows/perf-mobile-v10.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: test
+      - name: Inline mobile critical CSS and defer guard
+        shell: python
+        run: |
+          from pathlib import Path
+
+          css = '''<style id="we-mobile-critical-inline-v10">@media(max-width:767px){main[data-home-main="true"]{visibility:visible!important}[data-intro-overlay="true"]{display:none!important}[data-nav-root="true"]{opacity:1!important;pointer-events:auto!important;transition:none!important}[data-hero-title="true"],[data-hero-sub="true"],[data-hero-stats="true"]{opacity:1!important;visibility:visible!important;transform:none!important;transition:none!important}.ai-star,.stats-star-twinkle,.spark-trail-head,[data-pulse-ring="true"]{animation:none!important;filter:none!important}body>div[aria-hidden="true"].pointer-events-none.fixed.inset-0>canvas{display:none!important}main[data-home-main="true"] section[data-section]{content-visibility:auto;contain-intrinsic-size:900px}main[data-home-main="true"] [class*="will-change"]{will-change:auto!important}[data-method="true"] [data-method-track="true"]{will-change:transform!important}}</style>'''
+          old = '<script src="/next-stability-guard.js"></script>'
+          new = css + '<script src="/next-stability-guard.js" defer></script>'
+
+          changed = []
+          for name in ('index.html', 'es/index.html'):
+              p = Path(name)
+              if not p.exists():
+                  continue
+              s = p.read_text(encoding='utf-8')
+              before = s
+              if 'we-mobile-critical-inline-v10' not in s:
+                  s = s.replace(old, new, 1)
+              else:
+                  s = s.replace(old, '<script src="/next-stability-guard.js" defer></script>', 1)
+              s = s.replace('<link rel="preconnect" href="https://ipapi.co" crossorigin="anonymous"/>', '')
+              s = s.replace('<link rel="dns-prefetch" href="https://ipapi.co"/>', '')
+              if s != before:
+                  p.write_text(s, encoding='utf-8')
+                  changed.append(name)
+          print('changed:', changed)
+      - name: Commit optimized HTML
+        run: |
+          if git diff --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html es/index.html 2>/dev/null || true
+          git commit -m "perf: paint mobile hero before hydration"
+          git push origin HEAD:test
