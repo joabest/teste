@@ -1,48 +1,40 @@
-(()=>{
+(() => {
   'use strict';
-  if(window.__WE_FOOTER_GUARDIAN_V7__) return;
-  window.__WE_FOOTER_GUARDIAN_V7__=true;
+  if (window.__WE_FOOTER_PARTICLES_REMOVED__) return;
+  window.__WE_FOOTER_PARTICLES_REMOVED__ = true;
 
-  let loading=false;
-  let timer=null;
+  function cleanupParticles(){
+    [
+      'we-particle-object',
+      'we-particle-object-v3',
+      'we-particle-object-v4',
+      'we-particle-object-v5',
+      'we-particle-rain',
+      'we-particle-rain-v3',
+      'we-particle-rain-v4',
+      'we-particle-rain-v5'
+    ].forEach(id => document.getElementById(id)?.remove());
 
-  function hasTargets(){
-    return !!(document.querySelector('[data-footer-section="true"]') && document.querySelector('[data-footer-phrase="true"]'));
+    document.querySelectorAll('script[data-footer-particle-runtime]').forEach(node => node.remove());
+
+    const phrase = document.querySelector('[data-footer-phrase="true"]');
+    const footer = document.querySelector('[data-footer-section="true"]');
+    if (phrase) {
+      const section = phrase.closest('section') || phrase.parentElement;
+      section?.querySelectorAll('canvas').forEach(canvas => canvas.remove());
+    }
+    if (footer) {
+      footer.querySelectorAll('[id^="we-particle-"]').forEach(node => node.remove());
+    }
   }
 
-  function hasCanvas(){
-    return !!document.querySelector('#we-particle-object-v5, #we-particle-rain-v5');
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', cleanupParticles, {once:true});
+  } else {
+    cleanupParticles();
   }
 
-  function ensure(){
-    clearTimeout(timer);
-    timer=setTimeout(()=>{
-      if(!hasTargets() || hasCanvas() || loading) return;
-      loading=true;
-      try{ delete window.__WE_PARTICLE_V5__; }catch{ window.__WE_PARTICLE_V5__=false; }
-      const old=document.querySelector('script[data-footer-particle-runtime="v7"]');
-      if(old) old.remove();
-      const s=document.createElement('script');
-      s.src='/footer-particle-fallback.js?v=7&ts='+Date.now();
-      s.defer=true;
-      s.dataset.footerParticleRuntime='v7';
-      s.onload=()=>{ loading=false; setTimeout(ensure,450); };
-      s.onerror=()=>{ loading=false; };
-      (document.head||document.documentElement).appendChild(s);
-    },120);
-  }
-
-  function start(){
-    ensure();
-    const root=document.documentElement;
-    if(!root) return;
-    const mo=new MutationObserver(()=>ensure());
-    mo.observe(root,{childList:true,subtree:true});
-    setInterval(()=>{
-      if(document.visibilityState==='visible') ensure();
-    },1200);
-  }
-
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
-  else start();
+  // Clean once after React hydration; no observer, interval or animation loop remains.
+  setTimeout(cleanupParticles, 900);
+  setTimeout(cleanupParticles, 2400);
 })();
