@@ -3,6 +3,27 @@
 
   const sameOriginUrl=value=>{try{return new URL(value,location.href)}catch{return null}};
   const ANALYTICS_HOST=/((^|\.)googletagmanager\.com|(^|\.)google-analytics\.com)$/i;
+  const MOBILE=matchMedia('(max-width: 767px)').matches;
+
+  // Critical mobile paint: the exported HTML ships the home <main> hidden and waits
+  // for animation/hydration. Override that before body parsing so text can paint now.
+  if(MOBILE){
+    document.documentElement.classList.add('intro-skip','perf-mobile');
+    const critical=document.createElement('style');
+    critical.id='we-mobile-critical-v10';
+    critical.textContent=`@media(max-width:767px){
+      main[data-home-main="true"]{visibility:visible!important}
+      [data-intro-overlay="true"]{display:none!important}
+      [data-nav-root="true"]{opacity:1!important;pointer-events:auto!important;transition:none!important}
+      [data-hero-title="true"],[data-hero-sub="true"],[data-hero-stats="true"]{opacity:1!important;visibility:visible!important;transform:none!important;transition:none!important}
+      .ai-star,.stats-star-twinkle,.spark-trail-head,[data-pulse-ring="true"]{animation:none!important;filter:none!important}
+      body>div[aria-hidden="true"].pointer-events-none.fixed.inset-0>canvas{display:none!important}
+      main[data-home-main="true"] section[data-section]{content-visibility:auto;contain-intrinsic-size:900px}
+      main[data-home-main="true"] [class*="will-change"]{will-change:auto!important}
+      [data-method="true"] [data-method-track="true"]{will-change:transform!important}
+    }`;
+    (document.head||document.documentElement).appendChild(critical);
+  }
 
   const polishStaticDom=(root=document)=>{
     const scope=root&&root.querySelectorAll?root:document;
@@ -22,8 +43,20 @@
     scope.querySelectorAll('a[href*="awwwards.com/sites/weevolveit"]').forEach(node=>node.remove());
   };
 
+  const optimizeImages=()=>{
+    const hero=document.querySelector('[data-hero-section="true"]');
+    const header=document.querySelector('[data-nav-root="true"]');
+    document.querySelectorAll('img').forEach(img=>{
+      if(hero?.contains(img)||header?.contains(img)) return;
+      img.loading='lazy';
+      img.decoding='async';
+      try{img.fetchPriority='low'}catch{}
+    });
+  };
+
   const startStaticPolish=()=>{
     polishStaticDom(document);
+    optimizeImages();
     if(!document.documentElement)return;
     const observer=new MutationObserver(mutations=>{
       for(const mutation of mutations){
@@ -33,6 +66,8 @@
       }
     });
     observer.observe(document.documentElement,{childList:true,subtree:true});
+    // Hydration is finite; do not keep a global observer alive for the whole session.
+    setTimeout(()=>observer.disconnect(),5000);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startStaticPolish,{once:true});
   else startStaticPolish();
@@ -130,30 +165,52 @@
     if(!document.documentElement)return;
     const mo=new MutationObserver(recover);
     mo.observe(document.documentElement,{childList:true,subtree:true});
+    setTimeout(()=>mo.disconnect(),7000);
     recover();
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observe,{once:true});
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V9 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V10 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v9="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v10="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV9=key;
+    s.dataset.mirrorV10=key;
     (document.head||document.documentElement).appendChild(s);
   };
 
-  load('/mirror-ui-fixes.js?v=9','legacy-assets');
-  load('/asset-fallback-v6.js?v=9','assets');
+  const ready=fn=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  const idle=fn=>{
+    const run=()=>('requestIdleCallback' in window?requestIdleCallback(fn,{timeout:1800}):setTimeout(fn,900));
+    if(document.readyState==='complete')run();else addEventListener('load',run,{once:true});
+  };
+
+  // Universal local-first image rescue. The old mirror-ui helper is intentionally
+  // not loaded: it forced known images to GitHub Raw even when Vercel had them.
+  ready(()=>load('/asset-fallback-v6.js?v=10','assets'));
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
   const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
-  if(methodPages.has(p))load('/method-scroll-v6.js?v=9','method');
+  if(methodPages.has(p)){
+    ready(()=>{
+      const method=document.querySelector('[data-method="true"]');
+      if(!method)return;
+      const io=new IntersectionObserver(entries=>{
+        if(!entries[0]?.isIntersecting)return;
+        io.disconnect();
+        load('/method-scroll-v6.js?v=10','method');
+      },{rootMargin:'1300px 0px 1300px 0px'});
+      io.observe(method);
+    });
+  }
 
   const homePages=new Set(['/','/index.html','/es','/es/index.html']);
-  if(homePages.has(p))load('/globe-live-v6.js?v=9','globe-static');
+  if(homePages.has(p)){
+    // Static globe is visual-only: let the headline and primary UI paint first.
+    idle(()=>load('/globe-live-v6.js?v=10','globe-static'));
+  }
 })();
