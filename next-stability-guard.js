@@ -132,20 +132,25 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V5 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V6 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v5="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v6="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV5=key;
+    s.dataset.mirrorV6=key;
     (document.head||document.documentElement).appendChild(s);
   };
-  load('/mirror-ui-fixes.js?v=5','assets');
-  if(location.pathname==='/'||location.pathname==='/index.html'){
-    load('/globe-live-v5.js?v=5','globe');
-    load('/method-scroll-fallback.js?v=5','method');
-    load('/footer-particle-fallback.js?v=5','particles');
+
+  // Run on every page. Each helper safely does nothing when its target is absent.
+  load('/mirror-ui-fixes.js?v=6','legacy-assets');
+  load('/asset-fallback-v6.js?v=6','assets');
+  load('/method-scroll-v6.js?v=6','method');
+  load('/footer-particle-fallback.js?v=6','particles');
+
+  const p=location.pathname.replace(/\/+$/,'')||'/';
+  if(p==='/'||p==='/index.html'||p==='/es'||p==='/es/index.html'){
+    load('/globe-live-v6.js?v=6','globe');
   }
 })();
