@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  if (window.__WE_ASSET_FIX_V6__) return;
-  window.__WE_ASSET_FIX_V6__ = true;
+  if (window.__WE_ASSET_FIX_V7__) return;
+  window.__WE_ASSET_FIX_V7__ = true;
 
   const RAW='https://raw.githubusercontent.com/joabest/teste/test';
   const EXT=/\.(?:png|jpe?g|webp|gif|svg|avif|ico)$/i;
@@ -21,71 +21,66 @@
           if(iu.protocol==='https:'||iu.protocol==='http:') return {path:null,external:iu.href};
         }catch{}
         if(decoded.startsWith('/') && EXT.test(decoded.split('?')[0])) return {path:decoded.split('?')[0],external:null};
-        return {path:null,external:null};
       }
       if(u.origin===location.origin && EXT.test(u.pathname)) return {path:u.pathname,external:null};
     }catch{}
     return {path:null,external:null};
   }
 
-  function apply(img){
+  function normalize(img){
     if(!(img instanceof HTMLImageElement)) return;
     const current=img.getAttribute('src')||'';
-    if(current.startsWith('data:')||current.startsWith('blob:')) return;
-    const found=unwrap(current);
-    const picture=img.closest('picture');
-    picture?.querySelectorAll('source').forEach(s=>s.removeAttribute('srcset'));
-    img.removeAttribute('srcset');
-    img.removeAttribute('sizes');
+    if(!current || current.startsWith('data:') || current.startsWith('blob:')) return;
 
+    // Keep already-working same-origin assets on Vercel. Only unwrap Next's image
+    // optimizer URL to its direct local file; do NOT mirror everything to GitHub Raw.
+    const found=unwrap(current);
     if(found.external){
       if(/googleusercontent\.com/i.test(found.external)) img.referrerPolicy='no-referrer';
       if(img.src!==found.external) img.src=found.external;
       return;
     }
-    if(found.path){
-      const raw=RAW+found.path;
-      if(img.src!==raw) img.src=raw;
-      img.dataset.assetMirrorV6='1';
-      img.style.removeProperty('visibility');
-      img.style.removeProperty('display');
-      return;
-    }
-
-    // If React later restores a local srcset, prefer its first local candidate.
-    const set=img.getAttribute('srcset');
-    if(set){
-      const first=set.split(',')[0]?.trim().split(/\s+/)[0];
-      const f=unwrap(first);
-      if(f.path){img.removeAttribute('srcset');img.removeAttribute('sizes');img.src=RAW+f.path;}
+    if(found.path && current.includes('/_next/image')){
+      img.closest('picture')?.querySelectorAll('source').forEach(s=>s.removeAttribute('srcset'));
+      img.removeAttribute('srcset');
+      img.removeAttribute('sizes');
+      img.src=found.path;
+      img.dataset.assetLocalV7='1';
     }
   }
 
+  function fallback(img){
+    if(!(img instanceof HTMLImageElement) || img.dataset.rawFallbackV7==='1') return;
+    const found=unwrap(img.getAttribute('src')||'');
+    if(!found.path) return;
+    img.dataset.rawFallbackV7='1';
+    img.closest('picture')?.querySelectorAll('source').forEach(s=>s.removeAttribute('srcset'));
+    img.removeAttribute('srcset');
+    img.removeAttribute('sizes');
+    img.src=RAW+found.path;
+  }
+
   function sweep(root=document){
-    if(root instanceof HTMLImageElement) apply(root);
-    root.querySelectorAll?.('img').forEach(apply);
+    if(root instanceof HTMLImageElement) normalize(root);
+    root.querySelectorAll?.('img').forEach(normalize);
     root.querySelectorAll?.('a[href*="awwwards.com/sites/weevolveit"]').forEach(a=>a.remove());
   }
 
   function start(){
     sweep(document);
-    document.addEventListener('error',e=>{
-      const img=e.target;
-      if(!(img instanceof HTMLImageElement)) return;
-      const f=unwrap(img.getAttribute('src')||'');
-      if(f.path && !img.src.startsWith(RAW)){
-        img.removeAttribute('srcset');img.removeAttribute('sizes');img.src=RAW+f.path;
-      }
-    },true);
+    document.addEventListener('error',e=>fallback(e.target),true);
+
+    // Only process newly-added images. No attribute observer and no 2.5s polling loop.
     const mo=new MutationObserver(records=>{
       for(const r of records){
-        if(r.type==='attributes' && r.target instanceof HTMLImageElement) apply(r.target);
-        for(const n of r.addedNodes) if(n.nodeType===1) sweep(n);
+        for(const n of r.addedNodes){
+          if(n.nodeType===1) sweep(n);
+        }
       }
     });
-    mo.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src','srcset']});
-    setInterval(()=>sweep(document),2500);
+    mo.observe(document.documentElement,{subtree:true,childList:true});
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
 })();
