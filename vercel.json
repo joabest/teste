@@ -14,10 +14,6 @@
       "destination": "/ai-check.html"
     },
     {
-      "source": "/ai-visibility-check",
-      "destination": "/ai-visibility-check.html"
-    },
-    {
       "source": "/blog",
       "destination": "/blog.html"
     },
@@ -452,10 +448,6 @@
     {
       "source": "/blog/why-isnt-my-business-showing-up-in-chatgpt",
       "destination": "/blog/why-isnt-my-business-showing-up-in-chatgpt.html"
-    },
-    {
-      "source": "/business-diagnosis",
-      "destination": "/business-diagnosis.html"
     },
     {
       "source": "/case-studies",
@@ -1314,10 +1306,6 @@
       "destination": "/es/xt/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/_next/static/chunks/11zd_ofpxdf0k9fa5.html"
     },
     {
-      "source": "/free-seo-check",
-      "destination": "/free-seo-check.html"
-    },
-    {
       "source": "/method",
       "destination": "/method.html"
     },
@@ -1432,13 +1420,75 @@
   ],
   "headers": [
     {
-      "source": "/static-router-fix.js",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
         }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/business-diagnosis",
+      "destination": "/ai-business-check",
+      "permanent": true
+    },
+    {
+      "source": "/business-diagnosis.html",
+      "destination": "/ai-business-check",
+      "permanent": true
+    },
+    {
+      "source": "/es/business-diagnosis",
+      "destination": "/es/ai-business-check",
+      "permanent": true
+    },
+    {
+      "source": "/es/business-diagnosis.html",
+      "destination": "/es/ai-business-check",
+      "permanent": true
+    },
+    {
+      "source": "/ai-visibility-check",
+      "destination": "/ai-check",
+      "permanent": true
+    },
+    {
+      "source": "/ai-visibility-check.html",
+      "destination": "/ai-check",
+      "permanent": true
+    },
+    {
+      "source": "/es/ai-visibility-check",
+      "destination": "/es/ai-check",
+      "permanent": true
+    },
+    {
+      "source": "/es/ai-visibility-check.html",
+      "destination": "/es/ai-check",
+      "permanent": true
+    },
+    {
+      "source": "/free-seo-check",
+      "destination": "/seo-check",
+      "permanent": true
+    },
+    {
+      "source": "/free-seo-check.html",
+      "destination": "/seo-check",
+      "permanent": true
+    },
+    {
+      "source": "/es/free-seo-check",
+      "destination": "/es/seo-check",
+      "permanent": true
+    },
+    {
+      "source": "/es/free-seo-check.html",
+      "destination": "/es/seo-check",
+      "permanent": true
     }
   ]
 }
