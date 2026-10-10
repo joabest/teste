@@ -6,14 +6,14 @@
   const MOBILE=matchMedia('(max-width: 767px)').matches;
 
   const legacyProgressStyle=document.createElement('style');
-  legacyProgressStyle.id='we-remove-legacy-percent-v20';
+  legacyProgressStyle.id='we-remove-legacy-percent-v21';
   legacyProgressStyle.textContent='body>[data-complete][aria-hidden="true"]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}';
   (document.head||document.documentElement).appendChild(legacyProgressStyle);
 
   if(MOBILE){
     document.documentElement.classList.add('intro-skip','perf-mobile');
     const critical=document.createElement('style');
-    critical.id='we-mobile-critical-v20';
+    critical.id='we-mobile-critical-v21';
     critical.textContent=`@media(max-width:767px){
       html,body{scroll-behavior:auto!important}
       main[data-home-main="true"]{visibility:visible!important;background:#0b0b0d!important}
@@ -62,8 +62,7 @@
     if(!vids.length)return;
     const io=new IntersectionObserver(entries=>{
       for(const e of entries){
-        const v=e.target;
-        if(!(v instanceof HTMLVideoElement))continue;
+        const v=e.target;if(!(v instanceof HTMLVideoElement))continue;
         if(e.isIntersecting){if(v.autoplay||v.dataset.weAutoplay==='1')v.play().catch(()=>{})}
         else{try{v.pause()}catch{}}
       }
@@ -72,8 +71,7 @@
   }
 
   const startStaticPolish=()=>{
-    polishStaticDom(document);
-    optimizeMedia();
+    polishStaticDom(document);optimizeMedia();
     document.querySelectorAll('body>[data-complete][aria-hidden="true"]').forEach(el=>el.remove());
     if(MOBILE)return;
     const observer=new MutationObserver(mutations=>{
@@ -90,8 +88,7 @@
     if(!a||a.hasAttribute('download')||(a.target&&a.target!=='_self'))return;
     const href=a.getAttribute('href');
     if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')||href.startsWith('javascript:'))return;
-    const url=sameOriginUrl(a.href);
-    if(!url||url.origin!==location.origin)return;
+    const url=sameOriginUrl(a.href);if(!url||url.origin!==location.origin)return;
     if(url.pathname===location.pathname&&url.search===location.search&&url.hash)return;
     event.preventDefault();event.stopImmediatePropagation();location.href=url.pathname+url.search+url.hash;
   },true);
@@ -116,11 +113,18 @@
     };
   }
 
-  if(!MOBILE){
-    const scriptSrc=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,'src');
-    if(scriptSrc?.set&&scriptSrc?.get){Object.defineProperty(HTMLScriptElement.prototype,'src',{configurable:true,enumerable:scriptSrc.enumerable,get:scriptSrc.get,set(value){let next=value;try{const u=new URL(value,location.href);if(ANALYTICS_HOST.test(u.hostname))next='data:text/javascript,/*analytics-disabled*/';else if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&!this.hasAttribute('data-static-initial'))next='https://weevolveit.com'+u.pathname+u.search}catch{}return scriptSrc.set.call(this,next)}})}
-    const linkHref=Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype,'href');
-    if(linkHref?.set&&linkHref?.get){Object.defineProperty(HTMLLinkElement.prototype,'href',{configurable:true,enumerable:linkHref.enumerable,get:linkHref.get,set(value){let next=value;try{const u=new URL(value,location.href);if(ANALYTICS_HOST.test(u.hostname))next='data:text/plain,';else if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&this.rel==='stylesheet')next='https://weevolveit.com'+u.pathname+u.search}catch{}return linkHref.set.call(this,next)}})}
+  // Required for this static mirror: late Next chunks/styles may only exist on the original host.
+  const scriptSrc=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,'src');
+  if(scriptSrc?.set&&scriptSrc?.get){
+    Object.defineProperty(HTMLScriptElement.prototype,'src',{configurable:true,enumerable:scriptSrc.enumerable,get:scriptSrc.get,set(value){
+      let next=value;try{const u=new URL(value,location.href);if(ANALYTICS_HOST.test(u.hostname))next='data:text/javascript,/*analytics-disabled*/';else if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&!this.hasAttribute('data-static-initial'))next='https://weevolveit.com'+u.pathname+u.search}catch{}return scriptSrc.set.call(this,next)
+    }})
+  }
+  const linkHref=Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype,'href');
+  if(linkHref?.set&&linkHref?.get){
+    Object.defineProperty(HTMLLinkElement.prototype,'href',{configurable:true,enumerable:linkHref.enumerable,get:linkHref.get,set(value){
+      let next=value;try{const u=new URL(value,location.href);if(ANALYTICS_HOST.test(u.hostname))next='data:text/plain,';else if(u.origin===location.origin&&u.pathname.startsWith('/_next/static/chunks/')&&this.rel==='stylesheet')next='https://weevolveit.com'+u.pathname+u.search}catch{}return linkHref.set.call(this,next)
+    }})
   }
 
   let recovered=false;
@@ -130,37 +134,28 @@
     if(!text.includes("this page couldn't load")&&!text.includes('this page could not load'))return;
     recovered=true;
     const key='wee-static-recover:'+location.pathname+location.search;
-    try{if(sessionStorage.getItem(key)==='1'){history.back();return}sessionStorage.setItem(key,'1')}catch{}
-    location.reload();
+    try{if(sessionStorage.getItem(key)!=='1'){sessionStorage.setItem(key,'1');location.reload();return}}catch{}
   };
   const startRecovery=()=>{
     recover();
-    if(MOBILE){setTimeout(recover,1800);return}
-    const mo=new MutationObserver(recover);mo.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>mo.disconnect(),5000);
+    const mo=new MutationObserver(recover);mo.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>mo.disconnect(),MOBILE?3500:5000);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startRecovery,{once:true});else startRecovery();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V20 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V21 */
 (()=>{
-  const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v20="${key}"]`))return;
-    const s=document.createElement('script');s.src=src;s.defer=true;s.dataset.mirrorV20=key;(document.head||document.documentElement).appendChild(s);
-  };
+  const load=(src,key)=>{if(document.querySelector(`script[data-mirror-v21="${key}"]`))return;const s=document.createElement('script');s.src=src;s.defer=true;s.dataset.mirrorV21=key;(document.head||document.documentElement).appendChild(s)};
   const ready=fn=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
   const idle=fn=>{const run=()=>('requestIdleCallback' in window?requestIdleCallback(fn,{timeout:900}):setTimeout(fn,250));if(document.readyState==='complete')run();else addEventListener('load',run,{once:true})};
-
   ready(()=>load('/asset-fallback-v6.js?v=15','assets'));
   ready(()=>load('/section-progress-pink.js?v=6','section-progress'));
   if(matchMedia('(max-width:767px)').matches)ready(()=>load('/mobile-nav-fix.js?v=6','mobile-nav'));
-
   const p=location.pathname.replace(/\/+$/,'')||'/';
   const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
   if(methodPages.has(p))ready(()=>load('/method-scroll-v6.js?v=21','method'));
-
   const homePages=new Set(['/','/index.html','/es','/es/index.html']);
   if(homePages.has(p))idle(()=>load('/globe-live-v6.js?v=28','globe-interactive'));
-
   const blogPages=new Set(['/blog','/blog.html','/es/blog','/es/blog.html']);
   if(blogPages.has(p))ready(()=>load('/blog-pagination-v1.js?v=2','blog-pagination'));
 })();
