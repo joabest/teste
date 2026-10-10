@@ -1,15 +1,28 @@
 (() => {
   'use strict';
-  if(window.__WE_SECTION_PROGRESS_PINK_V7__)return;
-  window.__WE_SECTION_PROGRESS_PINK_V7__=true;
+  if(window.__WE_SECTION_PROGRESS_PINK_V8__)return;
+  window.__WE_SECTION_PROGRESS_PINK_V8__=true;
 
   const PINK='#ec008c';
   const path=location.pathname.replace(/\/+$/,'')||'/';
   const isHome=new Set(['/','/index.html','/es','/es/index.html']).has(path);
+  const mobile=matchMedia('(max-width:767px)').matches;
   let rail=null,dots=[],sections=[],raf=0;
 
+  if(mobile){
+    // Preserve the site's own responsive layout. Do not let the custom desktop Method controller touch mobile.
+    window.__WE_METHOD_SCROLL_V21__=true;
+    document.documentElement.classList.remove('perf-mobile');
+    const restoreOriginalFlow=()=>{
+      document.getElementById('we-mobile-critical-v21')?.remove();
+      document.querySelectorAll('.we-soft-transition-v24,.we-soft-transition-v25').forEach(n=>n.remove());
+    };
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restoreOriginalFlow,{once:true});
+    else restoreOriginalFlow();
+  }
+
   const style=document.createElement('style');
-  style.id='we-section-progress-pink-style-v7';
+  style.id='we-section-progress-pink-style-v8';
   style.textContent=`
     body>[data-complete][aria-hidden="true"]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
     #we-section-progress-pink{position:fixed!important;right:18px!important;left:auto!important;top:50%!important;transform:translateY(-50%)!important;z-index:2147482500!important;display:flex!important;visibility:visible!important;opacity:1!important;flex-direction:column;align-items:center;gap:8px;pointer-events:auto;user-select:none}
