@@ -10,7 +10,6 @@
   let sections = [];
   let raf = 0;
 
-  // Remove the previous left-side rail if an older cached version created it.
   document.getElementById('we-section-progress-pink')?.remove();
 
   const style = document.createElement('style');
@@ -110,9 +109,6 @@
   }
 
   function hideNativePercentageRail() {
-    // The mirrored site already has a small right-side percentage rail. Keep the
-    // information available to assistive tech, but hide the visual so our section
-    // dots can occupy that area without covering language controls on the left.
     const all = [...document.querySelectorAll('body *')];
     for (const el of all) {
       if (!(el instanceof HTMLElement) || el.id === 'we-section-progress-pink' || el.closest('#we-section-progress-pink')) continue;
@@ -182,12 +178,20 @@
   }
 
   function loadPolish() {
-    if (document.querySelector('script[data-site-polish-v24]')) return;
-    const s = document.createElement('script');
-    s.src = '/site-polish-v24.js?v=24';
-    s.defer = true;
-    s.dataset.sitePolishV24 = '1';
-    (document.head || document.documentElement).appendChild(s);
+    if (!document.querySelector('script[data-site-polish-v24]')) {
+      const s = document.createElement('script');
+      s.src = '/site-polish-v24.js?v=24';
+      s.defer = true;
+      s.dataset.sitePolishV24 = '1';
+      (document.head || document.documentElement).appendChild(s);
+    }
+    if (!document.querySelector('script[data-site-interactions-v17]')) {
+      const x = document.createElement('script');
+      x.src = '/site-interactions-v17.js?v=17';
+      x.defer = true;
+      x.dataset.siteInteractionsV17 = '1';
+      (document.head || document.documentElement).appendChild(x);
+    }
   }
 
   function boot() {
