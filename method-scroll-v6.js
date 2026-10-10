@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  if (window.__WE_METHOD_SCROLL_V11__) return;
-  window.__WE_METHOD_SCROLL_V11__ = true;
+  if (window.__WE_METHOD_SCROLL_V16__) return;
+  window.__WE_METHOD_SCROLL_V16__ = true;
 
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
@@ -12,18 +12,19 @@
     const rail=method?.querySelector('[data-method-rail="true"]');
     const track=method?.querySelector('[data-method-track="true"]');
     const intro=method?.querySelector('[data-method-intro="true"]');
-    if(!method||!rail||!track) return setTimeout(boot,120);
+    if(!method||!rail||!track) return setTimeout(boot,140);
 
     const slides=[...track.querySelectorAll('[data-method-slide]')];
     if(!slides.length) return;
 
-    let frac=innerWidth<768?1:.70;
+    let maxProgress=0;
+    let topDoc=0;
+    let total=1;
 
     function layout(){
       const mobile=innerWidth<768;
-      frac=mobile?1:.70;
       const vh=Math.max(520,innerHeight);
-      const totalVh=mobile?6.25:5.8;
+      const totalVh=mobile?6.2:5.8;
 
       method.style.setProperty('position','relative','important');
       method.style.setProperty('height',(vh*totalVh)+'px','important');
@@ -42,70 +43,66 @@
       if(intro){
         intro.style.setProperty('position','absolute','important');
         intro.style.setProperty('inset','0','important');
+        intro.style.setProperty('z-index','1','important');
         intro.style.setProperty('pointer-events','none','important');
-        intro.style.setProperty('z-index','3','important');
       }
 
       track.style.setProperty('position','absolute','important');
-      track.style.setProperty('left','0','important');
-      track.style.setProperty('top','0','important');
-      track.style.setProperty('display','flex','important');
-      track.style.setProperty('flex-direction','row','important');
-      track.style.setProperty('align-items','stretch','important');
-      track.style.setProperty('width',(slides.length*frac*100)+'vw','important');
+      track.style.setProperty('inset','0','important');
+      track.style.setProperty('width','100vw','important');
       track.style.setProperty('height','100svh','important');
+      track.style.setProperty('display','block','important');
+      track.style.setProperty('overflow','hidden','important');
+      track.style.setProperty('transform','none','important');
       track.style.setProperty('opacity','1','important');
-      track.style.setProperty('will-change','transform','important');
-      track.style.setProperty('transition','none','important');
       track.style.setProperty('z-index','2','important');
 
-      slides.forEach(slide=>{
-        slide.style.setProperty('position','relative','important');
+      slides.forEach((slide,i)=>{
+        slide.style.setProperty('position','absolute','important');
+        slide.style.setProperty('inset','0','important');
         slide.style.setProperty('display','flex','important');
-        slide.style.setProperty('flex','0 0 '+(frac*100)+'vw','important');
-        slide.style.setProperty('width',(frac*100)+'vw','important');
+        slide.style.setProperty('width','100vw','important');
         slide.style.setProperty('max-width','none','important');
         slide.style.setProperty('height','100svh','important');
         slide.style.setProperty('min-height','520px','important');
         slide.style.setProperty('margin','0','important');
-        slide.style.setProperty('overflow','visible','important');
-        slide.style.setProperty('opacity','1','important');
+        slide.style.setProperty('z-index',String(10+i),'important');
+        slide.style.setProperty('will-change','transform,opacity','important');
+        slide.style.setProperty('transition','none','important');
       });
+
+      const r=method.getBoundingClientRect();
+      topDoc=scrollY+r.top;
+      total=Math.max(1,method.offsetHeight-innerHeight);
       paint();
     }
 
     function paint(){
       raf=0;
       if(!document.body.contains(method)) return;
-      const mobile=innerWidth<768;
-      const rect=method.getBoundingClientRect();
-      const span=Math.max(1,method.offsetHeight-innerHeight);
-      const p=clamp(-rect.top/span,0,1);
 
-      const introEnd=mobile?.12:.10;
-      const moveStart=mobile?.08:.07;
-      const moveEnd=mobile?.95:.92;
-      const q=ease(clamp((p-moveStart)/(moveEnd-moveStart),0,1));
-
-      const start=innerWidth*(mobile?1.02:.92);
-      const end=mobile
-        ? -innerWidth*(slides.length-1)
-        : -innerWidth*((slides.length*frac)-1.02);
-      const x=start+(end-start)*q;
-      track.style.setProperty('transform',`translate3d(${x}px,0,0)`,'important');
+      const raw=clamp((scrollY-topDoc)/total,0,1);
+      // One-way reveal: once a phase has arrived, scrolling back up does not undo it.
+      maxProgress=Math.max(maxProgress,raw);
+      const p=maxProgress;
 
       if(intro){
-        const f=1-ease(clamp(p/introEnd,0,1));
-        intro.style.setProperty('opacity',String(f),'important');
-        intro.style.setProperty('transform',`translate3d(${(1-f)*-7}vw,0,0)`,'important');
+        const introOut=1-ease(clamp((p-.035)/.105,0,1));
+        intro.style.setProperty('opacity',String(introOut),'important');
+        intro.style.setProperty('transform',`translate3d(${(1-introOut)*-5}vw,0,0)`,'important');
       }
 
-      const center=innerWidth*.5;
+      const startBase=.105;
+      const gap=.155;
+      const duration=.13;
+
       slides.forEach((slide,i)=>{
-        const sc=x+(i*frac+frac*.5)*innerWidth;
-        const d=Math.abs(sc-center)/innerWidth;
-        const op=mobile?clamp(1-d*1.15,.04,1):clamp(1-d*.58,.28,1);
-        slide.style.setProperty('opacity',String(op),'important');
+        const start=startBase+i*gap;
+        const local=ease(clamp((p-start)/duration,0,1));
+        const x=(1-local)*104;
+        slide.style.setProperty('transform',`translate3d(${x}vw,0,0)`,'important');
+        slide.style.setProperty('opacity',String(clamp(local*1.08,0,1)),'important');
+        slide.style.setProperty('pointer-events',local>.98?'auto':'none','important');
       });
     }
 
@@ -118,7 +115,6 @@
     addEventListener('resize',()=>{layout();schedule();},{passive:true});
     layout();
 
-    // React can modify inline geometry after hydration. Reassert it a few times.
     [350,900,1800,3200].forEach(ms=>setTimeout(()=>{layout();schedule();},ms));
   }
 
