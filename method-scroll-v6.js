@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  if (window.__WE_METHOD_SCROLL_V17__) return;
-  window.__WE_METHOD_SCROLL_V17__ = true;
+  if (window.__WE_METHOD_SCROLL_V18__) return;
+  window.__WE_METHOD_SCROLL_V18__ = true;
 
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
@@ -16,33 +16,102 @@
     const slides=[...track.querySelectorAll('[data-method-slide]')];
     if(!slides.length)return;
 
-    // Kill the original fixed phase navigator. It was leaking over the audit section.
     const nativeSvg=method.querySelector('svg[aria-label="method progress"]');
     const nativeProgress=nativeSvg?.parentElement;
     if(nativeProgress)nativeProgress.style.setProperty('display','none','important');
 
-    method.style.setProperty('--method-bg','#ffffff');
-    method.style.setProperty('--method-fg','#171717');
-    method.style.setProperty('--method-border','rgba(0,0,0,.1)');
+    const BG='#0b0b0d';
+    const FG='#e8e8ea';
+    const MUTED='#8e8e95';
+    const PINK='#e4007c';
+    const BORDER='rgba(255,255,255,.08)';
+
+    method.style.setProperty('--method-bg',BG);
+    method.style.setProperty('--method-fg',FG);
+    method.style.setProperty('--method-muted',MUTED);
+    method.style.setProperty('--method-accent',PINK);
+    method.style.setProperty('--method-border',BORDER);
 
     let topDoc=0,total=1;
+    function paintTheme(root){
+      if(!root)return;
+      root.querySelectorAll('[data-method-name]').forEach(n=>n.style.setProperty('color',FG,'important'));
+      root.querySelectorAll('[data-method-tagline],[data-method-watermark]').forEach(n=>n.style.setProperty('color',MUTED,'important'));
+      root.querySelectorAll('[data-method-bullet]').forEach(n=>n.style.setProperty('color',FG,'important'));
+      root.querySelectorAll('a,button,[data-method-accent]').forEach(n=>{
+        const txt=(n.textContent||'').trim();
+        if(txt.length<80)n.style.setProperty('border-color',BORDER,'important');
+      });
+    }
+
     function layout(){
       const mobile=innerWidth<768,vh=Math.max(520,innerHeight),totalVh=mobile?6.15:5.8;
       method.style.setProperty('position','relative','important');
       method.style.setProperty('height',(vh*totalVh)+'px','important');
       method.style.setProperty('min-height',(vh*totalVh)+'px','important');
       method.style.setProperty('overflow','clip','important');
-      method.style.setProperty('background','#fff','important');
+      method.style.setProperty('background',BG,'important');
+      method.style.setProperty('color',FG,'important');
       method.style.setProperty('isolation','isolate','important');
 
-      rail.style.setProperty('position','sticky','important');rail.style.setProperty('top','0','important');rail.style.setProperty('left','0','important');rail.style.setProperty('width','100vw','important');rail.style.setProperty('height','100svh','important');rail.style.setProperty('min-height','520px','important');rail.style.setProperty('overflow','hidden','important');rail.style.setProperty('z-index','2','important');rail.style.setProperty('background','#fff','important');
-      if(intro){intro.style.setProperty('position','absolute','important');intro.style.setProperty('inset','0','important');intro.style.setProperty('z-index','1','important');intro.style.setProperty('pointer-events','none','important');intro.style.setProperty('color','#171717','important')}
-      track.style.setProperty('position','absolute','important');track.style.setProperty('inset','0','important');track.style.setProperty('width','100vw','important');track.style.setProperty('height','100svh','important');track.style.setProperty('display','block','important');track.style.setProperty('overflow','hidden','important');track.style.setProperty('transform','none','important');track.style.setProperty('opacity','1','important');track.style.setProperty('z-index','2','important');track.style.setProperty('background','#fff','important');
+      rail.style.setProperty('position','sticky','important');
+      rail.style.setProperty('top','0','important');
+      rail.style.setProperty('left','0','important');
+      rail.style.setProperty('width','100vw','important');
+      rail.style.setProperty('height','100svh','important');
+      rail.style.setProperty('min-height','520px','important');
+      rail.style.setProperty('overflow','hidden','important');
+      rail.style.setProperty('z-index','2','important');
+      rail.style.setProperty('background',BG,'important');
+      rail.style.setProperty('color',FG,'important');
+
+      if(intro){
+        intro.style.setProperty('position','absolute','important');
+        intro.style.setProperty('inset','0','important');
+        intro.style.setProperty('z-index','1','important');
+        intro.style.setProperty('pointer-events','none','important');
+        intro.style.setProperty('color',FG,'important');
+        intro.style.setProperty('background',BG,'important');
+        intro.querySelectorAll('h1,h2,h3,[class*="text-"]').forEach(n=>{
+          if((n.textContent||'').toLowerCase().includes('five phases')) n.style.setProperty('color',MUTED,'important');
+          else n.style.setProperty('color',FG,'important');
+        });
+      }
+
+      track.style.setProperty('position','absolute','important');
+      track.style.setProperty('inset','0','important');
+      track.style.setProperty('width','100vw','important');
+      track.style.setProperty('height','100svh','important');
+      track.style.setProperty('display','block','important');
+      track.style.setProperty('overflow','hidden','important');
+      track.style.setProperty('transform','none','important');
+      track.style.setProperty('opacity','1','important');
+      track.style.setProperty('z-index','2','important');
+      track.style.setProperty('background',BG,'important');
+      track.style.setProperty('color',FG,'important');
 
       slides.forEach((slide,i)=>{
-        slide.style.setProperty('position','absolute','important');slide.style.setProperty('inset','0','important');slide.style.setProperty('display','flex','important');slide.style.setProperty('width','100vw','important');slide.style.setProperty('max-width','none','important');slide.style.setProperty('height','100svh','important');slide.style.setProperty('min-height','520px','important');slide.style.setProperty('margin','0','important');slide.style.setProperty('z-index',String(10+i),'important');slide.style.setProperty('will-change','transform,opacity','important');slide.style.setProperty('transition','none','important');slide.style.setProperty('background','#fff','important');slide.style.setProperty('color','#171717','important');
-        slide.querySelectorAll('[data-method-name],[data-method-tagline],[data-method-bullet],[data-method-watermark]').forEach(n=>n.style.setProperty('color','#171717','important'));
+        slide.style.setProperty('position','absolute','important');
+        slide.style.setProperty('inset','0','important');
+        slide.style.setProperty('display','flex','important');
+        slide.style.setProperty('width','100vw','important');
+        slide.style.setProperty('max-width','none','important');
+        slide.style.setProperty('height','100svh','important');
+        slide.style.setProperty('min-height','520px','important');
+        slide.style.setProperty('margin','0','important');
+        slide.style.setProperty('z-index',String(10+i),'important');
+        slide.style.setProperty('will-change','transform,opacity','important');
+        slide.style.setProperty('transition','none','important');
+        slide.style.setProperty('background',BG,'important');
+        slide.style.setProperty('color',FG,'important');
+        slide.style.setProperty('border-color',BORDER,'important');
+        paintTheme(slide);
       });
+
+      method.querySelectorAll('[class*="border-"]').forEach(n=>n.style.setProperty('border-color',BORDER,'important'));
+      method.querySelectorAll('[class*="bg-white"],[class*="bg-[#fff"],[style*="background: white"]').forEach(n=>n.style.setProperty('background',BG,'important'));
+      method.querySelectorAll('[data-method-index],[data-method-step],[aria-current="true"]').forEach(n=>n.style.setProperty('color',PINK,'important'));
+
       const audit=[...document.querySelectorAll('section')].find(s=>(s.textContent||'').includes("What's slowing you down?"));
       if(audit){audit.style.setProperty('position','relative','important');audit.style.setProperty('z-index','20','important')}
       const r=method.getBoundingClientRect();topDoc=scrollY+r.top;total=Math.max(1,method.offsetHeight-innerHeight);paint();
@@ -66,7 +135,8 @@
       });
     }
     function schedule(){if(!raf)raf=requestAnimationFrame(paint)}
-    addEventListener('scroll',schedule,{passive:true});addEventListener('resize',()=>{clearTimeout(boot._r);boot._r=setTimeout(layout,120)},{passive:true});
+    addEventListener('scroll',schedule,{passive:true});
+    addEventListener('resize',()=>{clearTimeout(boot._r);boot._r=setTimeout(layout,120)},{passive:true});
     layout();[400,1000,2200].forEach(ms=>setTimeout(layout,ms));
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
