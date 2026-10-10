@@ -1,10 +1,10 @@
 (() => {
   'use strict';
-  if (window.__WE_GLOBE_V17_BOOTSTRAP__) return;
-  window.__WE_GLOBE_V17_BOOTSTRAP__ = true;
+  if (window.__WE_GLOBE_V20_BOOTSTRAP__) return;
+  window.__WE_GLOBE_V20_BOOTSTRAP__ = true;
   const s = document.createElement('script');
-  s.src = '/globe-live-v7.js?v=17';
+  s.src = '/globe-live-v7.js?v=20';
   s.defer = true;
-  s.dataset.globeV17 = '1';
+  s.dataset.globeV20 = '1';
   (document.head || document.documentElement).appendChild(s);
 })();
