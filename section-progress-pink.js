@@ -1,63 +1,78 @@
 (() => {
   'use strict';
-  if (window.__WE_SECTION_PROGRESS_PINK__) return;
-  window.__WE_SECTION_PROGRESS_PINK__ = true;
+  if (window.__WE_SECTION_PROGRESS_PINK_V2__) return;
+  window.__WE_SECTION_PROGRESS_PINK_V2__ = true;
 
   const PINK = '#ec008c';
-  const MAX_DOTS = 9;
   const MIN_SECTION_H = 180;
   let rail = null;
   let dots = [];
   let sections = [];
   let raf = 0;
 
+  // Remove the previous left-side rail if an older cached version created it.
+  document.getElementById('we-section-progress-pink')?.remove();
+
   const style = document.createElement('style');
-  style.id = 'we-section-progress-pink-style';
+  style.id = 'we-section-progress-pink-style-v2';
   style.textContent = `
     #we-section-progress-pink{
       position:fixed;
-      left:28px;
+      right:18px;
+      left:auto;
       top:50%;
       transform:translateY(-50%);
-      z-index:9998;
+      z-index:9996;
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:10px;
+      gap:7px;
       pointer-events:auto;
       user-select:none;
       -webkit-tap-highlight-color:transparent;
     }
+    #we-section-progress-pink::before{
+      content:"";
+      position:absolute;
+      top:-13px;
+      bottom:-13px;
+      left:50%;
+      width:1px;
+      transform:translateX(-50%);
+      background:linear-gradient(to bottom,transparent,rgba(236,0,140,.14) 10%,rgba(236,0,140,.14) 90%,transparent);
+      z-index:-1;
+    }
     #we-section-progress-pink button{
-      width:10px;
-      height:10px;
+      width:8px;
+      height:8px;
       padding:0;
       margin:0;
-      border:1.25px solid ${PINK};
+      border:1px solid ${PINK};
       border-radius:999px;
-      background:transparent;
-      opacity:.58;
+      background:#171717;
+      opacity:.62;
       cursor:pointer;
-      transition:height .28s ease,width .28s ease,background-color .28s ease,opacity .28s ease,box-shadow .28s ease,border-radius .28s ease;
+      transition:height .24s ease,width .24s ease,background-color .24s ease,opacity .24s ease,box-shadow .24s ease,border-radius .24s ease;
     }
     #we-section-progress-pink button.is-active{
-      width:10px;
-      height:30px;
+      width:8px;
+      height:24px;
       border-radius:999px;
       background:${PINK};
       opacity:1;
-      box-shadow:0 0 14px rgba(236,0,140,.34);
+      box-shadow:0 0 10px rgba(236,0,140,.32);
     }
     #we-section-progress-pink button:hover{opacity:1}
     @media (max-width:767px){
       #we-section-progress-pink{
-        left:14px;
-        gap:8px;
-        transform:translateY(-50%) scale(.9);
-        transform-origin:left center;
+        right:8px;
+        left:auto;
+        gap:5px;
+        transform:translateY(-50%) scale(.82);
+        transform-origin:right center;
       }
-      #we-section-progress-pink button{width:9px;height:9px}
-      #we-section-progress-pink button.is-active{width:9px;height:25px}
+      #we-section-progress-pink button{width:7px;height:7px}
+      #we-section-progress-pink button.is-active{width:7px;height:20px}
     }
     @media (prefers-reduced-motion:reduce){
       #we-section-progress-pink button{transition:none!important}
@@ -91,18 +106,32 @@
       uniq.push(el);
     }
     uniq.sort((a,b) => (a.getBoundingClientRect().top + scrollY) - (b.getBoundingClientRect().top + scrollY));
-    if (uniq.length <= MAX_DOTS) return uniq;
+    return uniq;
+  }
 
-    const picked = [];
-    for (let i = 0; i < MAX_DOTS; i++) {
-      const idx = Math.round(i * (uniq.length - 1) / (MAX_DOTS - 1));
-      picked.push(uniq[idx]);
+  function hideNativePercentageRail() {
+    // The mirrored site already has a small right-side percentage rail. Keep the
+    // information available to assistive tech, but hide the visual so our section
+    // dots can occupy that area without covering language controls on the left.
+    const all = [...document.querySelectorAll('body *')];
+    for (const el of all) {
+      if (!(el instanceof HTMLElement) || el.id === 'we-section-progress-pink' || el.closest('#we-section-progress-pink')) continue;
+      const text = (el.textContent || '').trim();
+      if (!/^\d{1,3}%$/.test(text)) continue;
+      const cs = getComputedStyle(el);
+      const r = el.getBoundingClientRect();
+      const onRight = r.left > innerWidth * .78;
+      const small = r.width < 100 && r.height < 120;
+      if ((cs.position === 'fixed' || cs.position === 'sticky' || cs.position === 'absolute') && onRight && small) {
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
+      }
     }
-    return [...new Set(picked)];
   }
 
   function build() {
     sections = candidates();
+    hideNativePercentageRail();
     if (sections.length < 2) {
       rail?.remove();
       rail = null;
@@ -118,7 +147,7 @@
     dots = sections.map((section, i) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.setAttribute('aria-label', `Go to section ${i + 1}`);
+      b.setAttribute('aria-label', `Go to section ${i + 1} of ${sections.length}`);
       b.addEventListener('click', () => {
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
@@ -152,17 +181,27 @@
     if (!raf) raf = requestAnimationFrame(update);
   }
 
+  function loadPolish() {
+    if (document.querySelector('script[data-site-polish-v24]')) return;
+    const s = document.createElement('script');
+    s.src = '/site-polish-v24.js?v=24';
+    s.defer = true;
+    s.dataset.sitePolishV24 = '1';
+    (document.head || document.documentElement).appendChild(s);
+  }
+
   function boot() {
     build();
+    loadPolish();
     addEventListener('scroll', onScroll, { passive:true });
     addEventListener('resize', () => {
       clearTimeout(boot._t);
-      boot._t = setTimeout(() => { build(); }, 180);
+      boot._t = setTimeout(build, 180);
     }, { passive:true });
 
     const mo = new MutationObserver(() => {
       clearTimeout(boot._m);
-      boot._m = setTimeout(() => build(), 350);
+      boot._m = setTimeout(build, 350);
     });
     mo.observe(document.body, { childList:true, subtree:true });
     setTimeout(() => mo.disconnect(), 7000);
