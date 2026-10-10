@@ -35,13 +35,10 @@
     const s=document.createElement('script');s.src=src;s.defer=true;s.dataset.weV6=key;(document.head||document.documentElement).appendChild(s);
   }
 
-  load('/mobile-nav-fix.js?v=6','mobile-nav');
+  load('/mobile-nav-fix.js?v=7','mobile-nav');
   if(mobile&&isMethodPage)load('/method-scroll-v6.js?v=21','method-mobile');
 
-  function removeLegacyPercent(){
-    document.querySelectorAll('body>[data-complete][aria-hidden="true"]').forEach(el=>el.remove());
-  }
-
+  function removeLegacyPercent(){document.querySelectorAll('body>[data-complete][aria-hidden="true"]').forEach(el=>el.remove())}
   function usable(el){if(!(el instanceof HTMLElement))return false;const cs=getComputedStyle(el),r=el.getBoundingClientRect();return cs.display!=='none'&&cs.visibility!=='hidden'&&r.height>=180&&r.width>=Math.min(280,innerWidth*.45)}
   function candidates(){const raw=[...document.querySelectorAll('main > section,main section[data-section],section[data-section],[data-method="true"],footer')].filter(usable),u=[];for(const el of raw){if(u.includes(el)||u.some(p=>p.contains(el)))continue;u.push(el)}return u.sort((a,b)=>(a.getBoundingClientRect().top+scrollY)-(b.getBoundingClientRect().top+scrollY))}
   function makeRail(count){rail?.remove();rail=document.createElement('nav');rail.id='we-section-progress-pink';rail.setAttribute('aria-label',isHome?'Scroll progress':'Page sections');dots=Array.from({length:count},(_,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',`Go to page ${i+1} of ${count}`);rail.appendChild(b);return b});document.body.appendChild(rail)}
