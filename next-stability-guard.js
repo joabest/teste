@@ -5,6 +5,12 @@
   const ANALYTICS_HOST=/((^|\.)googletagmanager\.com|(^|\.)google-analytics\.com)$/i;
   const MOBILE=matchMedia('(max-width: 767px)').matches;
 
+  // The original Next page ships a fixed 000%/100% progress widget. It is no longer used.
+  const legacyProgressStyle=document.createElement('style');
+  legacyProgressStyle.id='we-remove-legacy-percent-v17';
+  legacyProgressStyle.textContent='body>[data-complete][aria-hidden="true"]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}';
+  (document.head||document.documentElement).appendChild(legacyProgressStyle);
+
   if(MOBILE){
     document.documentElement.classList.add('intro-skip','perf-mobile');
     const critical=document.createElement('style');
@@ -58,16 +64,20 @@
   const startStaticPolish=()=>{
     polishStaticDom(document);
     optimizeImages();
+    document.querySelectorAll('body>[data-complete][aria-hidden="true"]').forEach(el=>el.remove());
     if(!document.documentElement)return;
     const observer=new MutationObserver(mutations=>{
       for(const mutation of mutations){
         for(const node of mutation.addedNodes){
-          if(node&&node.nodeType===1)polishStaticDom(node);
+          if(node&&node.nodeType===1){
+            polishStaticDom(node);
+            if(node.matches?.('body>[data-complete][aria-hidden="true"]'))node.remove();
+          }
         }
       }
     });
     observer.observe(document.documentElement,{childList:true,subtree:true});
-    setTimeout(()=>observer.disconnect(),5000);
+    setTimeout(()=>observer.disconnect(),7000);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startStaticPolish,{once:true});
   else startStaticPolish();
@@ -172,40 +182,32 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V16 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V17 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v16="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v17="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV16=key;
+    s.dataset.mirrorV17=key;
     (document.head||document.documentElement).appendChild(s);
   };
-
   const ready=fn=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  const idle=fn=>{
-    const run=()=>('requestIdleCallback' in window?requestIdleCallback(fn,{timeout:1600}):setTimeout(fn,700));
-    if(document.readyState==='complete')run();else addEventListener('load',run,{once:true});
-  };
+  const idle=fn=>{const run=()=>('requestIdleCallback' in window?requestIdleCallback(fn,{timeout:1200}):setTimeout(fn,450));if(document.readyState==='complete')run();else addEventListener('load',run,{once:true})};
 
   ready(()=>load('/asset-fallback-v6.js?v=15','assets'));
-  ready(()=>load('/section-progress-pink.js?v=3','section-progress'));
+  ready(()=>load('/section-progress-pink.js?v=4','section-progress'));
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
   const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
-  if(methodPages.has(p)){
-    ready(()=>load('/method-scroll-v6.js?v=15','method'));
-  }
+  if(methodPages.has(p))ready(()=>load('/method-scroll-v6.js?v=17','method'));
 
   const homePages=new Set(['/','/index.html','/es','/es/index.html']);
   if(homePages.has(p)){
     ready(()=>load('/footer-particle-fallback.js?v=15','footer-particles'));
-    idle(()=>load('/globe-live-v6.js?v=16','globe-interactive'));
+    idle(()=>load('/globe-live-v6.js?v=25','globe-interactive'));
   }
 
   const blogPages=new Set(['/blog','/blog.html','/es/blog','/es/blog.html']);
-  if(blogPages.has(p)){
-    ready(()=>load('/blog-pagination-v1.js?v=2','blog-pagination'));
-  }
+  if(blogPages.has(p))ready(()=>load('/blog-pagination-v1.js?v=2','blog-pagination'));
 })();
