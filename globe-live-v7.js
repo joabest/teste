@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  if (window.__WE_GLOBE_V20__) return;
-  window.__WE_GLOBE_V20__ = true;
+  if (window.__WE_GLOBE_V21__) return;
+  window.__WE_GLOBE_V21__ = true;
 
   const TAU = Math.PI * 2;
   const RAD = Math.PI / 180;
@@ -99,16 +99,14 @@
     [
       'we-globe-layer-v3','we-globe-layer-v4','we-custom-globe-v3','we-globe-interactive-v13',
       'we-globe-original-v15','we-globe-original-v16','we-globe-flow-v17','we-globe-live-v5',
-      'we-globe-live-v6','we-globe-fallback','we-original-globe-v18','we-globe-v20'
+      'we-globe-live-v6','we-globe-fallback','we-original-globe-v18','we-globe-v20','we-globe-v21'
     ].forEach(id=>document.getElementById(id)?.remove());
 
-    if(getComputedStyle(hero).position==='static') hero.style.position='relative';
-
     const layer=document.createElement('div');
-    layer.id='we-globe-v20';
+    layer.id='we-globe-v21';
     layer.setAttribute('aria-hidden','true');
     Object.assign(layer.style,{
-      position:'absolute',left:'0',right:'0',top:'0',height:'760px',zIndex:'8',
+      position:'absolute',left:'0',width:'100%',height:'760px',zIndex:'8',
       pointerEvents:'none',overflow:'visible'
     });
 
@@ -121,20 +119,26 @@
     });
 
     const canvas=document.createElement('canvas');
+    canvas.dataset.weGlobeV21='1';
     Object.assign(canvas.style,{
       position:'absolute',inset:'0',width:'100%',height:'100%',display:'block',
-      opacity:'0',transition:'opacity .45s ease'
+      opacity:'0',transition:'opacity .45s ease',overflow:'visible'
     });
-    wrap.appendChild(canvas); layer.appendChild(wrap); hero.prepend(layer);
+    wrap.appendChild(canvas); layer.appendChild(wrap); document.body.appendChild(layer);
 
     const style=document.createElement('style');
+    style.id='we-globe-v21-style';
     style.textContent=`
+      #we-globe-v21,#we-globe-v21 *{box-sizing:border-box!important}
+      #we-globe-v21{overflow:visible!important;clip:auto!important;contain:none!important}
+      #we-globe-v21>div{overflow:visible!important;clip:auto!important;contain:none!important}
+      #we-globe-v21 canvas{overflow:visible!important;clip:auto!important;contain:none!important}
       @media(max-width:767px){
-        #we-globe-v20{height:350px!important}
-        #we-globe-v20>div{width:290px!important;height:290px!important;min-width:290px!important;min-height:290px!important;top:18px!important}
+        #we-globe-v21{height:350px!important}
+        #we-globe-v21>div{width:290px!important;height:290px!important;min-width:290px!important;min-height:290px!important;top:18px!important}
       }
       @media(min-width:768px) and (max-width:1100px){
-        #we-globe-v20>div{width:500px!important;height:500px!important;min-width:500px!important;min-height:500px!important;top:54px!important}
+        #we-globe-v21>div{width:500px!important;height:500px!important;min-width:500px!important;min-height:500px!important;top:54px!important}
       }
     `;
     document.head.appendChild(style);
@@ -147,7 +151,11 @@
     let yaw=0,pitch=0,targetYaw=0,targetPitch=0;
     let dragging=false,lastX=0,lastY=0;
     let returning=true;
-    let lastT=performance.now();
+
+    function syncPosition(){
+      const r=hero.getBoundingClientRect();
+      layer.style.top=(window.scrollY+r.top)+'px';
+    }
 
     function homeAngles(){
       return { yaw:-visitor.lng*RAD, pitch:clamp(visitor.lat*RAD,-1.25,1.25) };
@@ -165,6 +173,7 @@
       dpr=Math.min(devicePixelRatio||1,2);
       canvas.width=Math.round(S*dpr); canvas.height=Math.round(S*dpr);
       ctx.setTransform(dpr,0,0,dpr,0,0);
+      syncPosition();
     }
 
     function project(lat,lng,rad=R){
@@ -185,16 +194,14 @@
     }
 
     function drawOrbitLines(){
-      // Fine white orbital wires.
-      orbit(-.78,.22,-R*.08,'white',.18,.58);
-      orbit(-.52,.31,R*.08,'white',.13,.52);
-      orbit(-.28,.17,-R*.14,'white',.16,.56);
-      orbit(.05,.29,R*.02,'white',.13,.50);
-      orbit(.34,.20,R*.11,'white',.17,.56);
-      orbit(.62,.34,-R*.05,'white',.12,.50);
-      // Only two accent wires, still hairline thin.
-      orbit(-.10,.23,R*.13,'pink',.50,.72);
-      orbit(.46,.16,-R*.10,'pink',.34,.66);
+      orbit(-.78,.22,-R*.08,'white',.24,.62);
+      orbit(-.52,.31,R*.08,'white',.18,.58);
+      orbit(-.28,.17,-R*.14,'white',.22,.60);
+      orbit(.05,.29,R*.02,'white',.18,.56);
+      orbit(.34,.20,R*.11,'white',.22,.60);
+      orbit(.62,.34,-R*.05,'white',.17,.56);
+      orbit(-.10,.23,R*.13,'pink',.62,.76);
+      orbit(.46,.16,-R*.10,'pink',.46,.70);
     }
 
     function drawGlobe(t){
@@ -202,13 +209,12 @@
 
       const aura=ctx.createRadialGradient(CX,CY,R*.72,CX,CY,R*1.18);
       aura.addColorStop(0,'rgba(255,255,255,.01)');
-      aura.addColorStop(.78,'rgba(255,255,255,.005)');
+      aura.addColorStop(.78,'rgba(255,255,255,.006)');
       aura.addColorStop(1,'rgba(255,255,255,0)');
       ctx.fillStyle=aura; ctx.beginPath(); ctx.arc(CX,CY,R*1.18,0,TAU); ctx.fill();
 
       drawOrbitLines();
 
-      // Transparent body, no heavy dark fill.
       const glass=ctx.createRadialGradient(CX-R*.26,CY-R*.32,R*.04,CX,CY,R);
       glass.addColorStop(0,'rgba(255,255,255,.022)');
       glass.addColorStop(.52,'rgba(255,255,255,.006)');
@@ -238,7 +244,6 @@
       const p=project(visitor.lat,visitor.lng,R*1.01);
       if(p.z<-.02) return;
 
-      // One and only one pink point. Smooth pulse.
       const pulse=.5+.5*Math.sin(t*.0042);
       const core=3.2+pulse*.7;
       const halo=8+pulse*7;
@@ -277,7 +282,6 @@
     function frame(t){
       requestAnimationFrame(frame);
       if(!visible||document.hidden) return;
-      lastT=t;
 
       if(!dragging){
         if(returning){
@@ -288,7 +292,6 @@
             yaw=targetYaw; pitch=targetPitch; returning=false;
           }
         }else if(!reduced){
-          // Very slight idle drift around the centered visitor, never random.
           const h=homeAngles();
           targetYaw=h.yaw + Math.sin(t*.00018)*.035;
           targetPitch=h.pitch + Math.sin(t*.00014)*.012;
@@ -310,9 +313,7 @@
     function move(e){
       if(!dragging) return;
       const dx=e.clientX-lastX,dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY;
-      // Unlimited yaw = full 360° horizontal rotation.
       yaw += dx*.0072;
-      // Wide pitch range lets the user inspect almost the entire sphere vertically.
       pitch = clamp(pitch-dy*.0062,-1.48,1.48);
     }
 
@@ -320,7 +321,6 @@
       if(!dragging) return;
       dragging=false; wrap.style.cursor='grab';
       try{wrap.releasePointerCapture(e.pointerId)}catch(_){}
-      // Always return to the visitor after release.
       centerOnVisitor(false);
     }
 
@@ -333,9 +333,11 @@
     const io=new IntersectionObserver(es=>visible=!!es[0]?.isIntersecting,{rootMargin:'180px'});
     io.observe(hero);
     addEventListener('resize',resize,{passive:true});
+    addEventListener('scroll',syncPosition,{passive:true});
 
     Promise.all([loadLand(),loadVisitor()]).finally(()=>{
       centerOnVisitor(true);
+      resize();
       canvas.style.opacity='1';
       requestAnimationFrame(frame);
     });
