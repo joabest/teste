@@ -30,15 +30,7 @@
       height: '82px',
       zIndex: '8',
       pointerEvents: 'none',
-      background: [
-        'radial-gradient(circle at 12% 72%, rgba(255,255,255,.96) 0 1.5px, transparent 2px)',
-        'radial-gradient(circle at 30% 42%, rgba(255,255,255,.90) 0 1px, transparent 1.8px)',
-        'radial-gradient(circle at 54% 68%, rgba(255,255,255,.94) 0 1.3px, transparent 2px)',
-        'radial-gradient(circle at 73% 38%, rgba(255,255,255,.90) 0 1px, transparent 1.8px)',
-        'radial-gradient(circle at 89% 66%, rgba(255,255,255,.94) 0 1.4px, transparent 2px)',
-        'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,.08) 28%, rgba(255,255,255,.72) 72%, #fff 100%)'
-      ].join(','),
-      backgroundSize: '120px 70px,140px 76px,130px 72px,150px 78px,120px 72px,100% 100%'
+      background: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,.08) 28%, rgba(255,255,255,.72) 72%, #fff 100%)'
     });
     section.prepend(overlay);
   }
@@ -111,8 +103,6 @@
   }
 
   function optimizeBackgroundVideos() {
-    // Some mirrored Next sections attach videos after hydration. Re-run the media
-    // optimizer briefly as those nodes appear, without keeping an observer forever.
     const mo = new MutationObserver(muts => {
       let hasMedia = false;
       for (const m of muts) {
