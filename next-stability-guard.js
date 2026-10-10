@@ -203,4 +203,9 @@
     ready(()=>load('/footer-particle-fallback.js?v=15','footer-particles'));
     idle(()=>load('/globe-live-v6.js?v=15','globe-interactive'));
   }
+
+  const blogPages=new Set(['/blog','/blog.html','/es/blog','/es/blog.html']);
+  if(blogPages.has(p)){
+    ready(()=>load('/blog-pagination-v1.js?v=1','blog-pagination'));
+  }
 })();
