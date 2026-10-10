@@ -209,3 +209,18 @@
   const blogPages=new Set(['/blog','/blog.html','/es/blog','/es/blog.html']);
   if(blogPages.has(p))ready(()=>load('/blog-pagination-v1.js?v=2','blog-pagination'));
 })();
+/* Performance v19: straight section boundary; no ink displacement rendering. */
+(()=>{
+ const style=document.createElement('style');
+ style.id='we-no-ink-v19';
+ style.textContent=`
+ main[data-home-main] div:has(>div[style*="url(#ink-edge)"]){display:none!important}
+ [style*="url(#ink-edge)"]{display:none!important;filter:none!important}
+ @media(max-width:767px){
+ [data-reveal-blur]{filter:none!important}
+ [data-nav-root] [class*="backdrop-blur"],[aria-label="Cookie consent"] [class*="backdrop-blur"]{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ .ai-star,.stats-star-twinkle,.spark-trail-head,[data-pulse-ring]{animation:none!important}
+ }
+ `;
+ (document.head||document.documentElement).appendChild(style);
+})();
