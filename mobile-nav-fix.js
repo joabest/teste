@@ -11,6 +11,7 @@
   let open = false;
   let openDisplay = 'block';
   let observer = null;
+  let cta = null;
 
   const norm = (value) => (value || '').replace(/\s+/g, ' ').trim().toLowerCase();
 
@@ -87,6 +88,12 @@
     return best;
   }
 
+  function findCta(root) {
+    if (!root) return null;
+    const nodes = [...root.querySelectorAll('a, button')];
+    return nodes.find((el) => norm(el.textContent).includes('message us')) || null;
+  }
+
   function unlockScroll() {
     document.documentElement.style.removeProperty('overflow');
     document.body.style.removeProperty('overflow');
@@ -99,6 +106,49 @@
     el.style.setProperty(prop, value, 'important');
   }
 
+  function clearMobileLayout() {
+    if (!panel) return;
+    [
+      'position','top','right','bottom','left','width','height','max-height','z-index',
+      'overflow-y','overscroll-behavior','box-sizing','padding-bottom','margin','transform'
+    ].forEach((prop) => panel.style.removeProperty(prop));
+    if (cta) {
+      ['position','bottom','z-index','background','backdrop-filter','margin-bottom'].forEach((prop) => cta.style.removeProperty(prop));
+    }
+  }
+
+  function applyMobileLayout() {
+    if (!panel || window.innerWidth > MOBILE_MAX) return;
+
+    // Keep the drawer entirely inside the visual viewport. This avoids the
+    // original absolute positioning pushing the CTA below the mobile browser UI.
+    setImportant(panel, 'position', 'fixed');
+    setImportant(panel, 'top', '96px');
+    setImportant(panel, 'right', '14px');
+    setImportant(panel, 'bottom', 'max(14px, env(safe-area-inset-bottom))');
+    setImportant(panel, 'left', '14px');
+    setImportant(panel, 'width', 'auto');
+    setImportant(panel, 'height', 'auto');
+    setImportant(panel, 'max-height', 'none');
+    setImportant(panel, 'z-index', '2147483000');
+    setImportant(panel, 'overflow-y', 'auto');
+    setImportant(panel, 'overscroll-behavior', 'contain');
+    setImportant(panel, 'box-sizing', 'border-box');
+    setImportant(panel, 'padding-bottom', '18px');
+    setImportant(panel, 'margin', '0');
+    setImportant(panel, 'transform', 'none');
+
+    cta = findCta(panel);
+    if (cta) {
+      setImportant(cta, 'position', 'sticky');
+      setImportant(cta, 'bottom', '0');
+      setImportant(cta, 'z-index', '4');
+      setImportant(cta, 'background', 'rgba(20,20,20,.96)');
+      setImportant(cta, 'backdrop-filter', 'blur(12px)');
+      setImportant(cta, 'margin-bottom', '0');
+    }
+  }
+
   function setOpen(next) {
     if (!panel || !button) return;
 
@@ -108,9 +158,8 @@
       panel.style.removeProperty('visibility');
       panel.style.removeProperty('opacity');
       panel.style.removeProperty('pointer-events');
-      panel.style.removeProperty('max-height');
-      panel.style.removeProperty('overflow-y');
       panel.removeAttribute('data-we-menu-fallback');
+      clearMobileLayout();
       unlockScroll();
       return;
     }
@@ -126,8 +175,7 @@
       setImportant(panel, 'visibility', 'visible');
       setImportant(panel, 'opacity', '1');
       setImportant(panel, 'pointer-events', 'auto');
-      setImportant(panel, 'max-height', 'calc(100dvh - 92px)');
-      setImportant(panel, 'overflow-y', 'auto');
+      applyMobileLayout();
       document.documentElement.style.setProperty('overflow', 'hidden', 'important');
       document.body.style.setProperty('overflow', 'hidden', 'important');
     } else {
@@ -160,8 +208,6 @@
     button.removeEventListener('click', onMenuClick, true);
     button.addEventListener('click', onMenuClick, true);
 
-    // Static mirrors can boot with the server-rendered drawer already open.
-    // Always normalize mobile to a closed state on first load.
     setOpen(false);
 
     panel.addEventListener('click', (event) => {
@@ -196,6 +242,7 @@
   window.addEventListener('resize', () => {
     if (!header || !button || !panel) wire();
     if (window.innerWidth > MOBILE_MAX) setOpen(false);
+    else if (open) applyMobileLayout();
   }, { passive: true });
 
   if (document.readyState === 'loading') {
