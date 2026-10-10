@@ -113,7 +113,6 @@
     };
   }
 
-  // Required for this static mirror: late Next chunks/styles may only exist on the original host.
   const scriptSrc=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,'src');
   if(scriptSrc?.set&&scriptSrc?.get){
     Object.defineProperty(HTMLScriptElement.prototype,'src',{configurable:true,enumerable:scriptSrc.enumerable,get:scriptSrc.get,set(value){
@@ -150,7 +149,7 @@
   const idle=fn=>{const run=()=>('requestIdleCallback' in window?requestIdleCallback(fn,{timeout:900}):setTimeout(fn,250));if(document.readyState==='complete')run();else addEventListener('load',run,{once:true})};
   ready(()=>load('/asset-fallback-v6.js?v=15','assets'));
   ready(()=>load('/section-progress-pink.js?v=6','section-progress'));
-  if(matchMedia('(max-width:767px)').matches)ready(()=>load('/mobile-nav-fix.js?v=6','mobile-nav'));
+  if(matchMedia('(max-width:767px)').matches)ready(()=>load('/mobile-nav-fix.js?v=7','mobile-nav'));
   const p=location.pathname.replace(/\/+$/,'')||'/';
   const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
   if(methodPages.has(p))ready(()=>load('/method-scroll-v6.js?v=21','method'));
