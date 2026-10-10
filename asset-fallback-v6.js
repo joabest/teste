@@ -84,3 +84,17 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
 })();
+
+// The original static mirror sometimes leaves the mobile navigation visually open
+// while its hamburger is still in the closed state. Load the dedicated guard from
+// a script that is already included on every mirrored page so the drawer is hidden
+// by default and only opens after an explicit tap.
+(() => {
+  if (window.__WE_MOBILE_NAV_BOOT__) return;
+  window.__WE_MOBILE_NAV_BOOT__ = true;
+  const s=document.createElement('script');
+  s.src='/mobile-nav-fix.js?v=5';
+  s.defer=true;
+  s.dataset.weMobileNavBoot='1';
+  (document.head||document.documentElement).appendChild(s);
+})();
