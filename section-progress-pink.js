@@ -150,7 +150,7 @@
 
   function loadPolish() {
     if (!document.querySelector('script[data-site-polish-v24]')) {
-      const s=document.createElement('script');s.src='/site-polish-v24.js?v=24';s.defer=true;s.dataset.sitePolishV24='1';(document.head||document.documentElement).appendChild(s);
+      const s=document.createElement('script');s.src='/site-polish-v24.js?v=25';s.defer=true;s.dataset.sitePolishV24='1';(document.head||document.documentElement).appendChild(s);
     }
     if (!document.querySelector('script[data-site-interactions-v17]')) {
       const x=document.createElement('script');x.src='/site-interactions-v17.js?v=17';x.defer=true;x.dataset.siteInteractionsV17='1';(document.head||document.documentElement).appendChild(x);
