@@ -172,14 +172,14 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V14 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V15 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v14="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v15="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV14=key;
+    s.dataset.mirrorV15=key;
     (document.head||document.documentElement).appendChild(s);
   };
 
@@ -189,18 +189,18 @@
     if(document.readyState==='complete')run();else addEventListener('load',run,{once:true});
   };
 
-  ready(()=>load('/asset-fallback-v6.js?v=14','assets'));
+  ready(()=>load('/asset-fallback-v6.js?v=15','assets'));
+  ready(()=>load('/section-progress-pink.js?v=1','section-progress'));
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
   const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
   if(methodPages.has(p)){
-    // Load immediately: on mobile the previous observer could miss the method section.
-    ready(()=>load('/method-scroll-v6.js?v=14','method'));
+    ready(()=>load('/method-scroll-v6.js?v=15','method'));
   }
 
   const homePages=new Set(['/','/index.html','/es','/es/index.html']);
   if(homePages.has(p)){
-    ready(()=>load('/footer-particle-fallback.js?v=14','footer-particles'));
-    idle(()=>load('/globe-live-v6.js?v=14','globe-interactive'));
+    ready(()=>load('/footer-particle-fallback.js?v=15','footer-particles'));
+    idle(()=>load('/globe-live-v6.js?v=15','globe-interactive'));
   }
 })();
