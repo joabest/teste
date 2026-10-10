@@ -5,7 +5,6 @@
   const ANALYTICS_HOST=/((^|\.)googletagmanager\.com|(^|\.)google-analytics\.com)$/i;
   const MOBILE=matchMedia('(max-width: 767px)').matches;
 
-  // The original Next page ships a fixed 000%/100% progress widget. It is no longer used.
   const legacyProgressStyle=document.createElement('style');
   legacyProgressStyle.id='we-remove-legacy-percent-v17';
   legacyProgressStyle.textContent='body>[data-complete][aria-hidden="true"]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}';
@@ -182,14 +181,14 @@
   else observe();
 })();
 
-/* MIRROR_CRITICAL_VISUAL_FIXES_V17 */
+/* MIRROR_CRITICAL_VISUAL_FIXES_V18 */
 (()=>{
   const load=(src,key)=>{
-    if(document.querySelector(`script[data-mirror-v17="${key}"]`))return;
+    if(document.querySelector(`script[data-mirror-v18="${key}"]`))return;
     const s=document.createElement('script');
     s.src=src;
     s.defer=true;
-    s.dataset.mirrorV17=key;
+    s.dataset.mirrorV18=key;
     (document.head||document.documentElement).appendChild(s);
   };
   const ready=fn=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
@@ -200,11 +199,10 @@
 
   const p=location.pathname.replace(/\/+$/,'')||'/';
   const methodPages=new Set(['/','/index.html','/method','/es','/es/index.html','/es/method']);
-  if(methodPages.has(p))ready(()=>load('/method-scroll-v6.js?v=17','method'));
+  if(methodPages.has(p))ready(()=>load('/method-scroll-v6.js?v=18','method'));
 
   const homePages=new Set(['/','/index.html','/es','/es/index.html']);
   if(homePages.has(p)){
-    ready(()=>load('/footer-particle-fallback.js?v=15','footer-particles'));
     idle(()=>load('/globe-live-v6.js?v=25','globe-interactive'));
   }
 
