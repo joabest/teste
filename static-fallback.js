@@ -72,13 +72,35 @@
   function methodFallback(){
     const title=$$('h1,h2,h3').find(el=>/the 5 method/i.test(el.textContent||''));
     if(!title)return;
-    const sec=title.closest('section')||title.parentElement;
-    if(!sec)return;
-    $$('[style*="opacity:0"],[style*="opacity: 0"],.opacity-0',sec).forEach(el=>{
-      el.style.opacity='1';el.style.visibility='visible';el.classList.remove('opacity-0');
-      if(el.style.transform)el.style.transform='none';
+
+    const methodEls=$$('*').filter(el=>[...el.attributes].some(a=>a.name.startsWith('data-method')));
+    methodEls.forEach(el=>{
+      el.style.opacity='1';
+      el.style.visibility='visible';
+      el.classList.remove('opacity-0','invisible');
+      if(el.style.transform&&/translate|scale/.test(el.style.transform)) el.style.transform='none';
     });
-    sec.style.minHeight='auto';
+
+    let sec=title.closest('section')||title.parentElement;
+    if(sec){
+      $$('[style*="opacity:0"],[style*="opacity: 0"],.opacity-0',sec).forEach(el=>{
+        el.style.opacity='1';el.style.visibility='visible';el.classList.remove('opacity-0');
+        if(el.style.transform)el.style.transform='none';
+      });
+    }
+
+    const phases=['DISCOVER','DIAGNOSE','DESIGN','DELIVER','EVOLVE'];
+    $$('main *').forEach(el=>{
+      const txt=(el.textContent||'').trim();
+      if(phases.includes(txt)){
+        let p=el;
+        for(let i=0;i<3&&p;i++,p=p.parentElement){
+          p.style.opacity='1';p.style.visibility='visible';
+          p.classList.remove('opacity-0','invisible');
+          if(p.style.transform) p.style.transform='none';
+        }
+      }
+    });
   }
 
   function footerFallback(){
@@ -94,5 +116,5 @@
 
   function init(){ revealStuck(); makeGlobe(); methodFallback(); footerFallback(); }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-  setTimeout(init,350);setTimeout(init,1200);
+  setTimeout(init,350);setTimeout(init,1200);setTimeout(init,2400);
 })();
