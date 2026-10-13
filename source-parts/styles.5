@@ -1,0 +1,53 @@
+m; }
+.about-aside .status-pulse { margin-right: 7px; vertical-align: middle; }.about-aside i { display: block; width: 22px; height: 1px; margin-block: 14px; background: var(--neon); }
+
+/* Final CTA and footer */
+.final-cta { position: relative; min-height: 580px; overflow: hidden; isolation: isolate; background: #03060a; }
+.final-image-wrap { position: absolute; z-index: -2; inset: 0 0 0 15%; overflow: hidden; }
+.final-image-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; opacity: .76; }
+.final-grid { z-index: -1; opacity: .13; }
+.final-vignette { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, #03060a 0%, rgba(3,6,10,.95) 22%, rgba(3,6,10,.72) 49%, rgba(3,6,10,.06) 100%), linear-gradient(0deg, #03060a 0%, transparent 35%, rgba(3,6,10,.12) 100%); }
+.final-content { position: relative; display: flex; min-height: 580px; flex-direction: column; align-items: flex-start; justify-content: center; padding-block: 90px; }
+.final-content .section-kicker { color: var(--cyan); }
+.final-status { display: flex; align-items: center; gap: 9px; margin-top: 35px; color: rgba(222,237,250,.62); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .13em; }
+.final-content h2 { margin-top: 17px; font-size: clamp(45px, 6.6vw, 82px); line-height: .99; }
+.final-content > p { margin: 17px 0 0; color: rgba(224,235,247,.72); font-size: 14px; }
+.final-button { margin-top: 26px; }
+.final-coordinates { position: absolute; right: 0; bottom: 33px; color: rgba(221,236,249,.46); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .13em; }
+.site-footer { padding-top: 70px; background: var(--page-bg); }
+.footer-main { display: grid; grid-template-columns: 1.7fr .75fr .75fr 1fr; gap: 35px; padding-bottom: 56px; }
+.footer-brand .wordmark { color: var(--text); }
+.footer-brand p { margin: 17px 0 0; color: var(--soft); font-size: 12px; }
+.footer-status, .footer-location { display: flex; align-items: center; gap: 8px; margin-top: 21px; color: var(--soft); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .09em; }
+.footer-status i { width: 3px; height: 3px; border-radius: 50%; background: var(--cyan); }
+.footer-heading { display: block; margin: 7px 0 21px; color: var(--soft); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .15em; }
+.footer-links-group { display: grid; align-content: start; justify-items: start; gap: 12px; }
+.footer-links-group a, .footer-privacy { padding: 0; border: 0; background: transparent; color: var(--text); font-size: 11px; cursor: pointer; transition: color .2s ease; }
+.footer-links-group a:hover, .footer-privacy:hover { color: var(--cyan); }
+.footer-contact-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text); font-size: 11px; }
+.footer-contact-link svg { color: var(--cyan); }
+.footer-location { font-size: 7px; }
+.footer-bottom { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line-color); color: var(--soft); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .1em; }
+.back-top { display: flex; align-items: center; gap: 8px; color: var(--text); font-size: 9px; }.back-top:first-letter { color: var(--cyan); }
+.whatsapp-float { position: fixed; z-index: 25; right: 26px; bottom: 24px; display: flex; min-height: 48px; align-items: center; gap: 11px; padding: 0 16px 0 13px; border: 1px solid rgba(0,229,255,.39); border-radius: 28px; background: rgba(3,10,17,.92); color: #effbff; box-shadow: 0 9px 32px rgba(0,0,0,.28), 0 0 22px rgba(0,102,255,.09); backdrop-filter: blur(12px); cursor: pointer; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+.whatsapp-float:hover { transform: translateY(-3px); border-color: var(--cyan); background: rgba(6,20,38,.97); }
+.whatsapp-float svg { width: 19px; height: 19px; color: var(--cyan); }.whatsapp-float span { font: 600 9px/1 'Space Grotesk', sans-serif; letter-spacing: .035em; }
+
+/* Contact and privacy dialog */
+.dialog-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(1,4,8,.76); backdrop-filter: blur(10px); animation: fade-in .18s ease both; }
+.dialog-panel { width: min(100%, 510px); padding: 25px 30px 31px; border: 1px solid rgba(0,168,255,.34); background: radial-gradient(ellipse at 92% 0%, rgba(0,102,255,.13), transparent 40%), #06101b; box-shadow: 0 24px 90px rgba(0,0,0,.52), 0 0 42px rgba(0,102,255,.07); }
+.dialog-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 35px; }
+.wordmark-compact .brand-mark { width: 32px; height: 32px; }.wordmark-compact .wordmark-copy strong { font-size: 13px; }.wordmark-compact .wordmark-copy > span { font-size: 7px; }
+.dialog-close { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(255,255,255,.17); border-radius: 50%; background: transparent; color: #fff; font-size: 21px; cursor: pointer; }
+.dialog-panel h2 { margin-top: 18px; font-size: clamp(39px, 9vw, 53px); line-height: 1.04; }
+.dialog-panel > p { margin: 20px 0 0; color: rgba(221,234,246,.75); font-size: 13px; line-height: 1.8; }
+.dialog-note { display: flex; align-items: center; gap: 9px; margin-top: 27px; color: rgba(221,234,246,.54); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .12em; }.dialog-note i { width: 3px; height: 3px; border-radius: 50%; background: var(--cyan); }
+
+/* Light mode: retain the blue signature while raising surface contrast */
+.light-mode .site-header { color: #081728; border-color: rgba(6,20,38,.12); background: linear-gradient(180deg, rgba(239,246,251,.93), rgba(239,246,251,.55)); }
+.light-mode .site-header .wordmark { color: #081728; }.light-mode .site-header .brand-mark path:not(.brand-mark-orbit) { stroke: #e9f7ff; }
+.light-mode .desktop-nav a { color: rgba(7,17,28,.68); }.light-mode .desktop-nav a:hover { color: #061426; }
+.light-mode .header-support { color: #061426; }.light-mode .theme-toggle { color: #061426; border-color: rgba(6,20,38,.2); background: rgba(255,255,255,.55); }
+.light-mode .solutions-section::before { border-color: rgba(0,102,255,.07); }.light-mode .service-card:hover { background: rgba(255,255,255,.8); }
+.light-mode .monitor-panel { background: radial-gradient(ellipse at 82% 10%, rgba(0,102,255,.09), transparent 38%), linear-gradient(125deg, #f8fbfe, #e8f1f8); }
+.light-mode .health-module, .light-mode .metric-card { backgro

@@ -1,0 +1,103 @@
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+
+type IconName = 'repair' | 'performance' | 'maintenance' | 'network' | 'security' | 'upgrade' | 'peripherals' | 'remote';
+type DialogName = 'contact' | 'privacy' | null;
+
+const heroImage = '/manus-storage/async-images/V87p3rekIFXJPpndyY5QFJ/image-1.webp';
+const supportImage = '/manus-storage/async-images/V87p3rekIFXJPpndyY5QFJ/image-2.webp';
+const ctaImage = '/manus-storage/async-images/V87p3rekIFXJPpndyY5QFJ/image-3.webp';
+
+const services: { number: string; title: string; description: string; icon: IconName }[] = [
+  { number: '01', title: 'Suporte e Reparo', description: 'Diagnóstico e resolução de problemas em computadores e sistemas.', icon: 'repair' },
+  { number: '02', title: 'Otimização de Computadores', description: 'Melhoria de desempenho, limpeza, configuração e otimização.', icon: 'performance' },
+  { number: '03', title: 'Manutenção Preventiva', description: 'Evite problemas antes que eles aconteçam.', icon: 'maintenance' },
+  { number: '04', title: 'Redes e Internet', description: 'Configuração, diagnóstico e otimização de redes.', icon: 'network' },
+  { number: '05', title: 'Backup e Segurança', description: 'Proteção e recuperação dos seus arquivos importantes.', icon: 'security' },
+  { number: '06', title: 'Montagem e Upgrade', description: 'Montagem, melhorias e atualização de computadores.', icon: 'upgrade' },
+  { number: '07', title: 'Impressoras e Periféricos', description: 'Instalação, configuração e resolução de falhas.', icon: 'peripherals' },
+  { number: '08', title: 'Suporte Remoto', description: 'Atendimento rápido sem precisar deslocamento.', icon: 'remote' },
+];
+
+const steps = [
+  ['01', 'Entre em contato'],
+  ['02', 'Analisamos o problema'],
+  ['03', 'Conectamos com segurança'],
+  ['04', 'Resolvemos'],
+  ['05', 'Você volta ao trabalho'],
+];
+
+const whatsappNumber = (import.meta.env.VITE_BAWERK_WHATSAPP as string | undefined)?.replace(/\D/g, '');
+const contactUrl = whatsappNumber
+  ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Olá, gostaria de solicitar suporte técnico da BAWERK SOLUTIONS.')}`
+  : null;
+
+function BrandMark() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 46 46" className="brand-mark" fill="none">
+      <rect x="1" y="1" width="44" height="44" rx="13" />
+      <path d="M16 12h10.5c5 0 8 2.5 8 6.5 0 2.5-1.4 4.3-3.7 5.2 2.9.8 4.7 2.7 4.7 5.8 0 4.2-3.2 7-8.4 7H16V12Z" />
+      <path className="brand-mark-orbit" d="M8 22.8 4.9 26l3.1 3.2M38 22.8l3.1 3.2-3.1 3.2" />
+      <circle cx="35" cy="11" r="2.3" />
+    </svg>
+  );
+}
+
+function Wordmark({ compact = false }: { compact?: boolean }) {
+  return (
+    <a className={`wordmark${compact ? ' wordmark-compact' : ''}`} href="#inicio" aria-label="BAWERK SOLUTIONS — início">
+      <BrandMark />
+      <span className="wordmark-copy"><strong>BAWERK</strong><span>SOLUTIONS</span></span>
+    </a>
+  );
+}
+
+function ServiceIcon({ name }: { name: IconName }) {
+  const common = { stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  let drawing;
+  switch (name) {
+    case 'repair': drawing = <><path d="m14 7 3 3-8.8 8.8a2.1 2.1 0 0 1-3-3L14 7Z" {...common} /><path d="m12.7 8.3 3-3a4.4 4.4 0 0 0 5.8 5.8l-3 3M5.5 18.5l3 3" {...common} /></>; break;
+    case 'performance': drawing = <><path d="M4 18a9 9 0 1 1 16 0" {...common} /><path d="m12 14 5-5M7 20h10" {...common} /><circle cx="12" cy="14" r="1" fill="currentColor" /></>; break;
+    case 'maintenance': drawing = <><path d="M12 3.5 20 7v5.5c0 4.5-3.1 7.5-8 9-4.9-1.5-8-4.5-8-9V7l8-3.5Z" {...common} /><path d="m8.5 12.3 2.2 2.2 4.8-5" {...common} /></>; break;
+    case 'network': drawing = <><circle cx="6" cy="7" r="2.1" {...common} /><circle cx="18" cy="6" r="2.1" {...common} /><circle cx="12" cy="18" r="2.1" {...common} /><path d="m8 7 7.9-.7M7.4 9l3.6 7M16.5 8l-3.3 8" {...common} /></>; break;
+    case 'security': drawing = <><rect x="5" y="10" width="14" height="11" rx="2" {...common} /><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3" {...common} /></>; break;
+    case 'upgrade': drawing = <><rect x="4" y="4" width="16" height="16" rx="2.5" {...common} /><rect x="9" y="9" width="6" height="6" rx="1" {...common} /><path d="M9 1.8v2M15 1.8v2M9 20.2v2M15 20.2v2M1.8 9h2M1.8 15h2M20.2 9h2M20.2 15h2" {...common} /></>; break;
+    case 'peripherals': drawing = <><path d="M6 4h12v11H6zM9 19h6M12 15v4M8.5 7h7M8.5 10h5" {...common} /></>; break;
+    case 'remote': drawing = <><path d="M5 13v-1a7 7 0 0 1 14 0v1M5 13H3.8A1.8 1.8 0 0 0 2 14.8v2.4A1.8 1.8 0 0 0 3.8 19H6v-6H5ZM19 13h1.2a1.8 1.8 0 0 1 1.8 1.8v2.4a1.8 1.8 0 0 1-1.8 1.8H18v-6h1Z" {...common} /><path d="M18 19c-.8 1.4-2.4 2-4 2" {...common} /></>; break;
+  }
+  return <svg aria-hidden="true" viewBox="0 0 24 24" className="service-icon">{drawing}</svg>;
+}
+
+function ArrowUpRight() {
+  return <svg aria-hidden="true" viewBox="0 0 18 18" fill="none"><path d="M4 14 14 4M5 4h9v9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+
+function ContactControl({ children, className, label, onFallback }: { children: import('react').ReactNode; className: string; label: string; onFallback: () => void }) {
+  if (contactUrl) return <a className={className} href={contactUrl} target="_blank" rel="noopener noreferrer" aria-label={label}>{children}</a>;
+  return <button className={className} type="button" onClick={onFallback} aria-label={label}>{children}</button>;
+}
+
+function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [lightMode, setLightMode] = useState(false);
+  const [dialog, setDialog] = useState<DialogName>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!dialog) return;
+    const previous = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setDia

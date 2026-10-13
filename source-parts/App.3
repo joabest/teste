@@ -1,0 +1,83 @@
+=> (
+                <article className="service-card" key={service.number} data-reveal onPointerMove={updateCardGlow}>
+                  <div className="service-card-top"><span className="service-number">{service.number} <i /></span><span className="service-icon-frame"><ServiceIcon name={service.icon} /></span></div>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                  <span className="service-card-line" aria-hidden="true" />
+                  <span className="service-card-corner" aria-hidden="true">↗</span>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="monitor-section section-space" aria-labelledby="monitor-title">
+          <div className="container">
+            <div className="monitor-panel" data-reveal>
+              <div className="monitor-header">
+                <div>
+                  <div className="section-kicker"><span>02</span><i /> CENTRAL BAWERK</div>
+                  <h2 id="monitor-title">Sua tecnologia<br /><span>sob controle.</span></h2>
+                </div>
+                <div className="monitor-live"><span className="status-pulse" />PAINEL DEMONSTRATIVO</div>
+              </div>
+              <div className="monitor-body">
+                <div className="health-module">
+                  <div className="module-label">SYSTEM HEALTH <span>●</span></div>
+                  <div className="health-value">98<span>%</span></div>
+                  <div className="health-track"><i /></div>
+                  <div className="module-foot"><span>ESTABILIDADE</span><b>ÓTIMA</b></div>
+                  <svg className="health-orbit" viewBox="0 0 220 220" aria-hidden="true"><circle cx="110" cy="110" r="88" /><circle cx="110" cy="110" r="70" /><circle className="orbit-progress" cx="110" cy="110" r="88" /></svg>
+                </div>
+                <div className="monitor-metrics">
+                  <div className="metric-card"><div className="module-label">NETWORK <span className="metric-state">● ONLINE</span></div><div className="metric-graph"><span>CONEXÃO SEGURA</span><svg viewBox="0 0 160 44" preserveAspectRatio="none" aria-hidden="true"><path d="M0 32 14 29 27 33 40 17 53 23 66 15 80 20 92 7 107 14 120 10 136 16 148 5 160 8" /></svg></div></div>
+                  <div className="metric-card"><div className="module-label">SECURITY <span className="metric-state">● ACTIVE</span></div><div className="metric-footnote">Proteção ativa <b><span className="tiny-lock">◆</span> SECURE</b></div></div>
+                  <div className="metric-card"><div className="module-label">BACKUP <span className="metric-state">● READY</span></div><div className="backup-progress"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div><div className="metric-footnote">Dados protegidos <b>VERIFICADO</b></div></div>
+                  <div className="metric-card metric-performance"><div className="module-label">PERFORMANCE <span className="metric-state">● OPTIMIZED</span></div><div className="perf-sparkline"><svg viewBox="0 0 230 52" preserveAspectRatio="none" aria-hidden="true"><path className="spark-fill" d="M0 42 18 37 35 39 53 25 70 29 89 18 107 23 124 11 143 16 161 8 180 13 199 4 215 10 230 2V52H0Z" /><path className="spark-line" d="M0 42 18 37 35 39 53 25 70 29 89 18 107 23 124 11 143 16 161 8 180 13 199 4 215 10 230 2" /></svg></div><div className="metric-footnote"><span>RESPOSTA</span><b>FLUIDA</b></div></div>
+                </div>
+              </div>
+              <div className="monitor-footer"><span>SYSTEM READY</span><span>MÉTRICAS ILUSTRATIVAS • SEM TELEMETRIA DE DISPOSITIVOS <i /> BAWERK / 2026</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="facts-section section-space" aria-label="Diferenciais BAWERK">
+          <div className="container">
+            <div className="facts-top"><div className="section-kicker"><span>03</span><i /> MISSÃO: SEU DIA A DIA</div><p>Suporte confiável, sem complicar a tecnologia.</p></div>
+            <div className="facts-grid">
+              <article className="fact-item" data-reveal><strong>100<span>%</span></strong><span>ATENDIMENTO<br />REMOTO</span></article>
+              <article className="fact-item" data-reveal><strong>BRASIL</strong><span>COBERTURA<br />NACIONAL</span></article>
+              <article className="fact-item" data-reveal><strong>RÁPIDO</strong><span>DIAGNÓSTICO<br />EFICIENTE</span></article>
+              <article className="fact-item" data-reveal><strong>SEGURO</strong><span>ATENDIMENTO<br />PROFISSIONAL</span></article>
+            </div>
+          </div>
+        </section>
+
+        <section className="process-section section-space" aria-labelledby="process-title">
+          <div className="container">
+            <div className="section-heading heading-split" data-reveal>
+              <div><div className="section-kicker"><span>04</span><i /> PROCESSO</div><h2 id="process-title">Tecnologia sem<br /><span>complicação.</span></h2></div>
+              <p className="section-intro">Um caminho claro para resolver o problema e devolver o ritmo ao seu trabalho.</p>
+            </div>
+            <ol className="process-list">
+              {steps.map(([number, label], index) => (
+                <li key={number} className="process-step" data-reveal>
+                  <span className="process-node"><i /></span>
+                  <span className="process-number">{number}</span>
+                  <h3>{label}</h3>
+                  {index < steps.length - 1 && <span className="process-connector" aria-hidden="true" />}
+                </li>
+              ))}
+            </ol>
+            <div className="process-foot"><span>CONEXÃO SEGURA EM CADA ETAPA</span><span>BAWERK / PROTOCOLO 05</span></div>
+          </div>
+        </section>
+
+        <section className="remote-section section-space" aria-labelledby="remote-title">
+          <div className="container">
+            <div className="remote-panel" data-reveal>
+              <div className="remote-image-wrap"><img src={supportImage} alt="Astronauta em composição tecnológica que representa o suporte remoto da BAWERK" loading="lazy" /></div>
+              <div className="remote-copy">
+                <div className="section-kicker"><span>05</span><i /> CONEXÃO REMOTA</div>
+                <div className="remote-coordinate" aria-hidden="true">NODE 025 / BRASIL</div>
+                <h2 id="rem

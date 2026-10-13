@@ -1,0 +1,69 @@
+ote-title">Não importa<br /><span>onde você esteja.</span></h2>
+                <p>A BAWERK pode ajudar você remotamente com diversos problemas técnicos, de forma rápida, segura e profissional.</p>
+                <ContactControl className="button button-primary" label="Falar com um especialista BAWERK" onFallback={() => setDialog('contact')}>FALAR COM UM ESPECIALISTA <ArrowUpRight /></ContactControl>
+                <div className="remote-assurance"><span className="status-pulse" /> REMOTE CONNECTION <i /> SUPORTE 100% ONLINE</div>
+              </div>
+              <span className="remote-frame-label" aria-hidden="true">REMOTE SUPPORT / 05</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="about-section section-space" id="sobre" aria-labelledby="about-title">
+          <div className="container about-layout" data-reveal>
+            <div className="about-code" aria-hidden="true"><span>BS / 2026</span><span className="about-glyph">B<span>.</span></span><span>MISSION CONTROL</span></div>
+            <div className="about-content">
+              <div className="section-kicker"><span>06</span><i /> SOBRE A BAWERK</div>
+              <h2 id="about-title">Tecnologia é<br /><span>a nossa missão.</span></h2>
+              <p>A BAWERK SOLUTIONS ajuda pessoas e empresas a manter computadores, redes e sistemas funcionando com estabilidade, segurança e alto desempenho.</p>
+              <p>Nosso objetivo é simplificar a tecnologia e resolver problemas de forma eficiente, sem complicação.</p>
+              <a className="text-link" href="#contato">CONHEÇA NOSSO SUPORTE <ArrowUpRight /></a>
+            </div>
+            <div className="about-aside"><span className="status-pulse" /> SYSTEM READY <i /> TECNOLOGIA HUMANA, RESPOSTAS PRECISAS.</div>
+          </div>
+        </section>
+
+        <section className="final-cta" id="contato" aria-labelledby="cta-title">
+          <div className="final-image-wrap" aria-hidden="true"><img src={ctaImage} alt="" loading="lazy" /></div>
+          <div className="final-grid" aria-hidden="true" />
+          <div className="final-vignette" aria-hidden="true" />
+          <div className="container final-content" data-reveal>
+            <div className="section-kicker"><span>07</span><i /> PRONTO PARA CONECTAR</div>
+            <div className="final-status"><span className="status-pulse" /> CANAL DE SUPORTE</div>
+            <h2 id="cta-title">PRECISA DE AJUDA<br /><span>COM TECNOLOGIA?</span></h2>
+            <p>Fale com a BAWERK SOLUTIONS.</p>
+            <ContactControl className="button button-primary final-button" label="Solicitar atendimento BAWERK" onFallback={() => setDialog('contact')}>SOLICITAR ATENDIMENTO <ArrowUpRight /></ContactControl>
+            <span className="final-coordinates" aria-hidden="true">BR 23°33′ / NETWORK 100%</span>
+          </div>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <div className="container">
+          <div className="footer-main">
+            <div className="footer-brand"><Wordmark /><p>Tecnologia, suporte e soluções inteligentes.</p><div className="footer-status"><span className="status-pulse" /> ATENDIMENTO REMOTO <i /> BRASIL</div></div>
+            <div className="footer-links-group"><span className="footer-heading">EXPLORAR</span><a href="#inicio">Início</a><a href="#solucoes">Soluções</a><a href="#servicos">Serviços</a></div>
+            <div className="footer-links-group"><span className="footer-heading">BAWERK</span><a href="#sobre">Sobre</a><a href="#contato">Contato</a><button className="footer-privacy" type="button" onClick={() => setDialog('privacy')}>Privacidade</button></div>
+            <div className="footer-contact"><span className="footer-heading">SUPORTE</span><ContactControl className="footer-contact-link" label="Solicitar suporte BAWERK" onFallback={() => setDialog('contact')}>Fale com a BAWERK <ArrowUpRight /></ContactControl><span className="footer-location"><span className="status-pulse" /> SUPORTE REMOTO 100% ONLINE</span></div>
+          </div>
+          <div className="footer-bottom"><span>© 2026 BAWERK SOLUTIONS</span><span>TECNOLOGIA QUE MANTÉM VOCÊ EM MOVIMENTO.</span><a href="#inicio" className="back-top" aria-label="Voltar ao início">↑ <span>VOLTAR AO TOPO</span></a></div>
+        </div>
+      </footer>
+
+      <ContactControl className="whatsapp-float" label="Falar com a BAWERK no WhatsApp" onFallback={() => setDialog('contact')}>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M20 11.7a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M9 8.5c.2-.5.5-.5.8-.5.2 0 .4 0 .5.3l.7 1.6c.1.2.1.4-.1.6l-.5.6c-.2.2-.2.3-.1.5.4.8 1 1.4 1.8 1.8.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.3.1.3.3.3.5 0 .3-.1.7-.4 1-.3.3-.9.6-1.4.6-.4 0-1.1-.1-2.1-.6-1-.5-1.8-1.2-2.4-2-.6-.8-1-1.7-1-2.4 0-.6.2-1.2.7-1.8Z" fill="currentColor"/></svg>
+        <span>Falar com a BAWERK</span>
+      </ContactControl>
+
+      {dialog && (
+        <div className="dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setDialog(null); }}>
+          <section className="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-description">
+            <div className="dialog-top"><Wordmark compact /><button ref={closeButtonRef} className="dialog-close" type="button" aria-label="Fechar janela" onClick={() => setDialog(null)}>×</button></div>
+            {dialog === 'contact' ? <>
+              <div className="section-kicker"><span>SUPORTE</span><i /> CONEXÃO BAWERK</div>
+              <h2 id="dialog-title">Vamos colocar<br /><span>sua tecnologia</span><br />em movimento.</h2>
+              <p id="dialog-description">O canal oficial de WhatsApp ainda precisa ser configurado pela BAWERK. Assim que o número oficial for informado, este botão abrirá o atendimento direto.</p>
+              <div className="dialog-note"><span className="status-pulse" /> ATENDIMENTO REMOTO <i /> BRASIL</div>
+            </> : <>
+              <div className="section-kicker"><span>INFORMAÇÃO</span><i /> PRIVACIDADE</div>
+              <h2 id="dialog-title">Seus dados<br /><span>com cuidado.</span></h2>
+              <p id="dialog-description">Esta página não possui formulários nem rastreadores próprios. A política oficial de privacidade da BAWERK deve ser inserida pela empr

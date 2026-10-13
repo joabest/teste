@@ -1,0 +1,102 @@
+log(null);
+      if (event.key === 'Tab') {
+        const focusable = Array.from(document.querySelectorAll<HTMLElement>('.dialog-panel button, .dialog-panel a[href]'));
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    document.body.classList.add('dialog-open');
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.classList.remove('dialog-open');
+      previous?.focus();
+    };
+  }, [dialog]);
+
+  function updateCardGlow(event: ReactPointerEvent<HTMLElement>) {
+    if (event.pointerType === 'touch') return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`);
+    event.currentTarget.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`);
+  }
+
+  return (
+    <div className={`site-shell${lightMode ? ' light-mode' : ''}`}>
+      <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
+      <header className="site-header">
+        <div className="header-inner container">
+          <Wordmark />
+          <nav className={`desktop-nav${menuOpen ? ' nav-open' : ''}`} id="primary-navigation" aria-label="Navegação principal">
+            <a href="#inicio" onClick={() => setMenuOpen(false)}>Início</a>
+            <a href="#solucoes" onClick={() => setMenuOpen(false)}>Soluções</a>
+            <a href="#servicos" onClick={() => setMenuOpen(false)}>Serviços</a>
+            <a href="#sobre" onClick={() => setMenuOpen(false)}>Sobre</a>
+            <a href="#contato" onClick={() => setMenuOpen(false)}>Contato</a>
+          </nav>
+          <div className="header-actions">
+            <ContactControl className="header-support" label="Solicitar suporte BAWERK" onFallback={() => setDialog('contact')}>SUPORTE <ArrowUpRight /></ContactControl>
+            <button className="theme-toggle" type="button" aria-label={lightMode ? 'Ativar tema escuro' : 'Ativar tema claro'} aria-pressed={lightMode} onClick={() => setLightMode(!lightMode)}>
+              {lightMode ? <span aria-hidden="true">☀</span> : <span aria-hidden="true">☾</span>}
+            </button>
+            <button className={`menu-toggle${menuOpen ? ' menu-open' : ''}`} type="button" aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={menuOpen} aria-controls="primary-navigation" onClick={() => setMenuOpen(!menuOpen)}>
+              <span /><span />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main id="conteudo">
+        <section className="hero-section" id="inicio" aria-labelledby="hero-title">
+          <div className="hero-grid" aria-hidden="true" />
+          <div className="hero-image-wrap" aria-hidden="true">
+            <img className="hero-image" src={heroImage} alt="" fetchPriority="high" />
+          </div>
+          <div className="hero-vignette" aria-hidden="true" />
+          <div className="hero-orbit hero-orbit-one" aria-hidden="true" />
+          <div className="hero-orbit hero-orbit-two" aria-hidden="true" />
+          <div className="hero-noise" aria-hidden="true" />
+          <div className="hero-container container">
+            <div className="hero-copy">
+              <div className="hero-eyebrow hero-enter hero-enter-1">
+                <span className="eyebrow-line" />
+                <span>BAWERK SOLUTIONS</span>
+                <span className="eyebrow-index">SYS.01 / BR</span>
+              </div>
+              <div className="system-status hero-enter hero-enter-2"><span className="status-pulse" />TODOS OS SISTEMAS OPERACIONAIS</div>
+              <h1 id="hero-title" className="hero-title hero-enter hero-enter-3">TECNOLOGIA<br /><span>SEM LIMITES.</span></h1>
+              <p className="hero-description hero-enter hero-enter-4">Suporte, manutenção, redes e soluções inteligentes para manter sua tecnologia funcionando no máximo desempenho.</p>
+              <div className="hero-actions hero-enter hero-enter-5">
+                <ContactControl className="button button-primary" label="Solicitar suporte técnico" onFallback={() => setDialog('contact')}>SOLICITAR SUPORTE <ArrowUpRight /></ContactControl>
+                <a className="button button-secondary" href="#solucoes">CONHECER SOLUÇÕES <span className="button-arrow" aria-hidden="true">↓</span></a>
+              </div>
+              <div className="hero-footnote hero-enter hero-enter-6"><span className="footnote-dot" />ATENDIMENTO REMOTO <span className="footnote-divider">•</span> BRASIL <span className="footnote-coord">LATENCY 12MS</span></div>
+            </div>
+            <div className="hero-caption" aria-hidden="true"><span>FIG. 01</span><span>INFRAESTRUTURA EM ÓRBITA</span><span>SECURE CONNECTION</span></div>
+            <div className="hero-side-note" aria-hidden="true"><span>NODE 025</span><i /><span>CONNECTED</span></div>
+            <div className="hero-scroll" aria-hidden="true"><span>SCROLL PARA EXPLORAR</span><i /></div>
+          </div>
+        </section>
+
+        <section className="intro-strip" aria-label="Apresentação BAWERK">
+          <div className="container intro-strip-inner">
+            <div className="intro-mark"><span className="status-pulse" />BAWERK // ONLINE</div>
+            <p>Tecnologia que mantém você <span>em movimento.</span></p>
+            <span className="intro-index">REMOTE CONNECTION <b>—</b> 001</span>
+          </div>
+        </section>
+
+        <section className="solutions-section section-space" id="solucoes" aria-labelledby="solutions-title">
+          <div className="container">
+            <div className="section-heading heading-split" data-reveal>
+              <div>
+                <div className="section-kicker"><span>01</span><i /> SOLUÇÕES BAWERK</div>
+                <h2 id="solutions-title">Tecnologia funcionando<br /><span>como deveria.</span></h2>
+              </div>
+              <p className="section-intro">Do diagnóstico à prevenção, cuidamos do que faz a sua tecnologia funcionar — com clareza, segurança e precisão.</p>
+            </div>
+            <div className="service-grid" id="servicos">
+              {services.map((service) 

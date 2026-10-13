@@ -1,0 +1,53 @@
+0%; transform: rotate(-24deg); pointer-events: none; }
+.hero-orbit-one { top: 22%; }
+.hero-orbit-two { top: 30%; right: -7%; width: 680px; height: 210px; border-color: rgba(0,229,255,.1); transform: rotate(-37deg); }
+.hero-noise { position: absolute; z-index: -1; inset: 0; opacity: .065; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.93' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.24'/%3E%3C/svg%3E"); }
+.hero-container { position: relative; z-index: 1; display: flex; min-height: max(740px, 100svh); align-items: center; padding-top: 95px; padding-bottom: 86px; }
+.hero-copy { width: min(100%, 660px); padding-block: 32px; }
+.hero-eyebrow, .section-kicker { display: flex; align-items: center; gap: 12px; color: var(--cyan); font: 600 10px/1.4 'Space Grotesk', sans-serif; letter-spacing: .19em; }
+.eyebrow-line { display: block; width: 26px; height: 1px; background: var(--cyan); box-shadow: 0 0 13px var(--cyan); }
+.eyebrow-index { margin-left: 8px; color: rgba(213,229,247,.5); font-size: 9px; letter-spacing: .14em; }
+.system-status { display: flex; align-items: center; gap: 9px; width: fit-content; margin-top: 38px; padding: 8px 11px; border: 1px solid rgba(0,168,255,.21); background: rgba(3,12,21,.42); color: rgba(220,238,251,.77); font: 500 9px/1 'Space Grotesk', sans-serif; letter-spacing: .11em; }
+.status-pulse { display: inline-block; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 9px rgba(0,229,255,.85); animation: pulse 2.6s ease-in-out infinite; }
+.hero-title, .section-heading h2, .monitor-header h2, .remote-copy h2, .about-content h2, .final-content h2, .dialog-panel h2 { margin: 24px 0 0; font-family: 'Space Grotesk', 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -.07em; }
+.hero-title { font-size: clamp(58px, 7.4vw, 104px); line-height: .92; }
+.hero-title span, .section-heading h2 span, .monitor-header h2 span, .remote-copy h2 span, .about-content h2 span, .final-content h2 span, .dialog-panel h2 span { color: var(--cyan); }
+.hero-description { max-width: 450px; margin: 24px 0 0; color: rgba(224,235,247,.73); font-size: 15px; line-height: 1.8; }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 30px; }
+.button { display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: 15px; padding: 0 18px; border: 1px solid transparent; font-size: 10px; font-weight: 700; letter-spacing: .1em; cursor: pointer; transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease; }
+.button:hover { transform: translateY(-2px); }
+.button-primary { border-color: #1798ff; background: linear-gradient(115deg, #0066ff, #007edb); color: #fff; box-shadow: 0 8px 28px rgba(0,102,255,.18); }
+.button-primary:hover { border-color: var(--cyan); background: linear-gradient(115deg, #0874ff, #009be8); box-shadow: 0 10px 32px rgba(0,168,255,.26); }
+.button-secondary { border-color: rgba(207,224,241,.22); background: rgba(3,6,10,.21); color: rgba(239,246,255,.86); }
+.button-secondary:hover { border-color: rgba(0,229,255,.6); background: rgba(0,168,255,.09); }
+.button-arrow { color: var(--cyan); font-size: 16px; line-height: .6; }
+.hero-footnote { display: flex; align-items: center; gap: 8px; margin-top: 29px; color: rgba(224,235,247,.6); font: 500 9px/1 'Space Grotesk', sans-serif; letter-spacing: .13em; }
+.footnote-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); }
+.footnote-divider { color: var(--cyan); }
+.footnote-coord { margin-left: 15px; color: rgba(224,235,247,.36); }
+.hero-caption { position: absolute; right: 0; bottom: 38px; display: flex; gap: 16px; color: rgba(219,232,245,.48); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .13em; }
+.hero-caption span + span::before { margin-right: 15px; color: var(--cyan); content: '/'; }
+.hero-side-note { position: absolute; top: 47%; right: 0; display: grid; justify-items: end; gap: 10px; color: rgba(219,232,245,.55); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .14em; writing-mode: vertical-rl; }
+.hero-side-note i { width: 1px; height: 54px; background: linear-gradient(var(--cyan), transparent); }
+.hero-scroll { position: absolute; bottom: 36px; left: 0; display: flex; align-items: center; gap: 11px; color: rgba(219,232,245,.47); font: 500 8px/1 'Space Grotesk', sans-serif; letter-spacing: .15em; }
+.hero-scroll i { width: 36px; height: 1px; background: linear-gradient(90deg, var(--cyan), transparent); }
+.hero-enter { opacity: 0; animation: rise-in .8s var(--ease) forwards; }
+.hero-enter-1 { animation-delay: .14s; }.hero-enter-2 { animation-delay: .3s; }.hero-enter-3 { animation-delay: .47s; }.hero-enter-4 { animation-delay: .68s; }.hero-enter-5 { animation-delay: .86s; }.hero-enter-6 { animation-delay: 1s; }
+
+/* Section typography */
+.intro-strip { border-block: 1px solid var(--line-color); background: linear-gradient(90deg, rgba(0,102,255,.06), transparent 50%, rgba(0,168,255,.035)); }
+.intro-strip-inner { display: flex; min-height: 84px; align-items: center; justify-content: space-between; gap: 24px; }
+.intro-mark, .intro-index { display: flex; align-items: center; gap: 9px; color: var(--soft); font: 500 9px/1 'Space Grotesk', sans-serif; letter-spacing: .15em; white-space: nowrap; }
+.intro-mark { color: var(--text); }
+.intro-strip-inner > p { margin: 0; color: var(--soft); font-size: 15px; }
+.intro-strip-inner > p span { color: var(--text); font-weight: 600; }
+.intro-index { gap: 7px; opacity: .72; }.intro-index b { color: var(--cyan); font-weight: 400; }
+.section-kicker { gap: 10px; color: var(--neon); font-size: 9px; letter-spacing: .17em; }
+.section-kicker > span { color: var(--soft); }
+.section-kicker > i { display: inline-block; width: 18px; height: 1px; background: var(--neon); opacity: .72; }
+.section-heading h2, .monitor-header h2, .remote-copy h2, .about-content h2 { font-size: clamp(42px, 5.4vw, 68px); line-height: 1.01; }
+.heading-split { display: flex; align-items: flex-end; justify-content: space-between; gap: 44px; margin-bottom: 51px; }
+.section-intro { max-width: 330px; margin: 0 0 7px; color: var(--soft); font-size: 14px; line-height: 1.85; }
+
+/* Service cards */
+.solutions-section { position: rel

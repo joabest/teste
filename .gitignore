@@ -1,0 +1,8 @@
+node_modules
+dist
+dist-ssr
+src/App.tsx
+src/styles.css
+.env
+.env.*
+.DS_Store

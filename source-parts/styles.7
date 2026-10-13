@@ -1,0 +1,65 @@
+height: 280px; }
+  .remote-image-wrap::after { background: linear-gradient(0deg, #050c14 0%, rgba(5,12,20,.12) 45%, transparent 100%); }
+  .remote-copy { padding: 10px 23px 34px; }
+  .remote-coordinate { margin-top: 22px; }
+  .remote-copy h2 { margin-top: 13px; font-size: clamp(39px, 9vw, 53px); }
+  .remote-copy > p { font-size: 12px; }
+  .remote-assurance { flex-wrap: wrap; gap: 7px; font-size: 7px; }
+  .remote-frame-label { right: 12px; bottom: 13px; }
+  .about-section { padding-block: 91px; }
+  .about-layout { grid-template-columns: 1fr; gap: 22px; }
+  .about-code { min-height: 0; flex-direction: row; align-items: center; padding: 0 0 16px; border: 0; border-bottom: 1px solid rgba(0,168,255,.2); }
+  .about-glyph { font-size: 50px; }
+  .about-content h2 { font-size: clamp(42px, 9vw, 55px); }
+  .about-content > p { font-size: 12px; }
+  .about-aside { margin: 0; }
+  .final-cta, .final-content { min-height: 530px; }
+  .final-image-wrap { inset: 0 -40% 0 0; }
+  .final-image-wrap img { object-position: 62% center; opacity: .67; }
+  .final-vignette { background: linear-gradient(0deg, #03060a 4%, rgba(3,6,10,.83) 37%, rgba(3,6,10,.1) 100%), linear-gradient(90deg, rgba(3,6,10,.85), rgba(3,6,10,.1)); }
+  .final-content { padding-block: 60px; }
+  .final-content h2 { font-size: clamp(41px, 9vw, 65px); }
+  .final-coordinates { right: 20px; bottom: 23px; font-size: 7px; }
+  .site-footer { padding-top: 53px; }
+  .footer-main { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 35px 20px; padding-bottom: 38px; }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-heading { margin-bottom: 16px; }
+  .footer-bottom { flex-wrap: wrap; min-height: 68px; padding-block: 15px; font-size: 7px; }
+  .footer-bottom > span:nth-child(2) { display: none; }
+  .whatsapp-float { right: 14px; bottom: 13px; min-height: 44px; padding-inline: 12px; }
+  .whatsapp-float span { font-size: 8px; }
+  .dialog-panel { padding: 20px 21px 25px; }
+}
+@media (max-width: 390px) {
+  .container { width: calc(100% - 32px); }
+  .wordmark { gap: 8px; }
+  .brand-mark { width: 33px; height: 33px; }
+  .header-support { padding: 9px 8px; letter-spacing: .07em; }
+  .hero-title { font-size: clamp(47px, 12vw, 58px); }
+  .hero-description { font-size: 12px; }
+  .hero-actions { align-items: stretch; }
+  .hero-actions .button { min-height: 44px; padding-inline: 9px; font-size: 8px; }
+  .hero-caption { font-size: 6px; }
+  .service-card { min-height: 220px; padding-inline: 12px; }
+  .service-card h3 { font-size: 13px; }
+  .service-card p { font-size: 9px; }
+  .monitor-panel { padding-inline: 16px; }
+  .monitor-live { max-width: 91px; line-height: 1.35; }
+  .metric-card { padding: 11px; }
+  .metric-footnote b { font-size: 7px; }
+  .final-content h2 { font-size: clamp(39px, 10.2vw, 49px); }
+}
+
+/* Reveals are progressive enhancement; reduced-motion visitors see content immediately. */
+.js-enabled [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity .65s var(--ease), transform .65s var(--ease); }
+.js-enabled [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+.js-enabled .service-card:nth-child(4n+2) { transition-delay: .07s; }.js-enabled .service-card:nth-child(4n+3) { transition-delay: .14s; }.js-enabled .service-card:nth-child(4n) { transition-delay: .21s; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(19px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+@keyframes pulse { 0%,100% { opacity: .7; box-shadow: 0 0 4px rgba(0,229,255,.48); } 50% { opacity: 1; box-shadow: 0 0 10px rgba(0,229,255,.95); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes astronaut-drift { to { transform: scale(1.045) translate3d(0, -.4%, 0); } }
+@keyframes telemetry-trace { to { stroke-dashoffset: -80; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .js-enabled [data-reveal] { opacity: 1; transform: none; }
+}
