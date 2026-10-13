@@ -14,11 +14,16 @@ module.exports = function handler(req, res) {
 
   if (!target.startsWith('/')) target = '/' + target;
 
-  // Only allow local static assets from this deployment.
   if (target.startsWith('//') || target.includes('..')) {
     res.statusCode = 400;
     res.end('Invalid image url');
     return;
+  }
+
+  // The HTTrack mirror saved service images as .webp while the original
+  // Next.js HTML still requests the former .jpg/.jpeg/.png source paths.
+  if (target.startsWith('/images/services/')) {
+    target = target.replace(/\.(?:jpe?g|png)$/i, '.webp');
   }
 
   res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
