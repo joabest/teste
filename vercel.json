@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/:path*/_next/:asset*", "destination": "/_next/:asset*" },
+    { "source": "/:path*/images/:asset*", "destination": "/images/:asset*" },
+    { "source": "/:path*/brand/:asset*", "destination": "/brand/:asset*" },
+    { "source": "/:path*/static/:asset*", "destination": "/static/:asset*" },
+    { "source": "/:path*/logos/:asset*", "destination": "/logos/:asset*" }
+  ]
+}
