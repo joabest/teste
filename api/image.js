@@ -21,9 +21,19 @@ module.exports = function handler(req, res) {
   }
 
   // The HTTrack mirror saved service images as .webp while the original
-  // Next.js HTML still requests the former .jpg/.jpeg/.png source paths.
+  // rendered Next.js HTML still requests old .jpg/.jpeg/.png source paths.
   if (target.startsWith('/images/services/')) {
     target = target.replace(/\.(?:jpe?g|png)$/i, '.webp');
+  }
+
+  // Some image families were never downloaded by HTTrack. Keep the mirror
+  // functional by falling back to the original public asset for those paths.
+  const missingLocalFamily =
+    (target.startsWith('/images/') && !target.startsWith('/images/services/')) ||
+    target.startsWith('/logos/clients/');
+
+  if (missingLocalFamily) {
+    target = 'https://weevolveit.com' + target;
   }
 
   res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
