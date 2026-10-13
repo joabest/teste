@@ -4,6 +4,7 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/_next/image", "destination": "/api/image" },
+    { "source": "/:path*/_next/image", "destination": "/api/image" },
     { "source": "/:path*/_next/:asset*", "destination": "/_next/:asset*" },
     { "source": "/:path*/images/:asset*", "destination": "/images/:asset*" },
     { "source": "/:path*/brand/:asset*", "destination": "/brand/:asset*" },
