@@ -5,8 +5,11 @@
   "rewrites": [
     { "source": "/_next/image", "destination": "/api/image" },
     { "source": "/:path*/_next/image", "destination": "/api/image" },
+    { "source": "/logos/clients/:asset*", "destination": "https://weevolveit.com/logos/clients/:asset*" },
+    { "source": "/:path*/logos/clients/:asset*", "destination": "https://weevolveit.com/logos/clients/:asset*" },
+    { "source": "/images/:asset*", "destination": "https://weevolveit.com/images/:asset*" },
+    { "source": "/:path*/images/:asset*", "destination": "https://weevolveit.com/images/:asset*" },
     { "source": "/:path*/_next/:asset*", "destination": "/_next/:asset*" },
-    { "source": "/:path*/images/:asset*", "destination": "/images/:asset*" },
     { "source": "/:path*/brand/:asset*", "destination": "/brand/:asset*" },
     { "source": "/:path*/static/:asset*", "destination": "/static/:asset*" },
     { "source": "/:path*/logos/:asset*", "destination": "/logos/:asset*" }
